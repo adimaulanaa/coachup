@@ -1,4 +1,3 @@
-import 'package:download_file/json_file_manager.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Download File',
+      title: 'CoachUp',
       debugShowCheckedModeBanner: false, // Menyembunyikan banner debug
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -46,16 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            InkWell(
-              onTap: () async {
-                await JsonFileManager.saveJsonFile();
-              },
-              child: const Text("Simpan JSON"),
-            ),
           ],
         ),
       ),
-      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

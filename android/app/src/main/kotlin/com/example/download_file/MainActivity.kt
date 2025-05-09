@@ -1,4 +1,4 @@
-package com.example.download_file
+package com.example.coachup
 
 import io.flutter.embedding.android.FlutterActivity
 

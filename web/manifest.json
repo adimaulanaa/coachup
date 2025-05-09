@@ -1,6 +1,6 @@
 {
-    "name": "download_file",
-    "short_name": "download_file",
+    "name": "coachup",
+    "short_name": "coachup",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
