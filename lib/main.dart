@@ -1,53 +1,40 @@
+import 'package:coachup/core/di/injection_container.dart' as di;
+import 'package:coachup/core/config/config_resources.dart';
+import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:coachup/features/onboarding/onboarding.dart';
+import 'package:coachup/features/students/presentation/bloc/students_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init(); // ✅ Inisialisasi dependency injection
+  // runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<DashboardBloc>()),
+        BlocProvider(create: (_) => di.sl<StudentsBloc>()),
+        // Tambahkan Bloc lain di sini kalau perlu
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'CoachUp',
-      debugShowCheckedModeBanner: false, // Menyembunyikan banner debug
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        fontFamily: 'Poppins', // Mengatur font default untuk aplikasi
       ),
-      home: const MyHomePage(title: 'Flutter Download File'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
-      ),
+      navigatorKey: AppNavigator.navigatorKey,
+      title: StringResources.nameApp,
+      debugShowCheckedModeBanner: false,
+      home: const Onboarding(),
     );
   }
 }
