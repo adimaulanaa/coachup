@@ -4,4 +4,4 @@ Aplikasi ini di buat untuk membantu pelathin mengatur pelatihan dan mengelola pe
 
 ## Concept App
 
-<p align="center"><a href="https://github.com/adimaulanaa/"><img width="80%" alt="Hello, I'm Adi" src="Coachup.png" /></a></p>
+<img src="Coachup.png" width="80%" alt="Coachup image">
