@@ -4,4 +4,4 @@ Aplikasi ini di buat untuk membantu pelathin mengatur pelatihan dan mengelola pe
 
 ## Concept App
 
-<img src="Coachup.png" width="80%" alt="Coachup image">
+<img src="coachup.png" width="80%" alt="Coachup image">
