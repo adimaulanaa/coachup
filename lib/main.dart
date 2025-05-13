@@ -1,6 +1,7 @@
 import 'package:coachup/core/di/injection_container.dart' as di;
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:coachup/features/onboarding/onboarding.dart';
 import 'package:coachup/features/students/presentation/bloc/students_bloc.dart';
@@ -16,6 +17,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => di.sl<DashboardBloc>()),
         BlocProvider(create: (_) => di.sl<StudentsBloc>()),
+        BlocProvider(create: (_) => di.sl<CoachingBloc>()),
         // Tambahkan Bloc lain di sini kalau perlu
       ],
       child: const MyApp(),

@@ -1,5 +1,7 @@
+import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
+import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_botton.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
@@ -8,6 +10,8 @@ import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_event.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_state.dart';
+import 'package:coachup/features/coaching/presentation/widget/view_add_student.dart';
+import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,38 +24,48 @@ class CreatedCoachingPage extends StatefulWidget {
 
 class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
   bool isSubmit = false;
-  bool isNFC = false;
-  String isNFCMessage = '';
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController ktpController = TextEditingController();
-  final TextEditingController idCardController = TextEditingController();
-  final TextEditingController sakController = TextEditingController();
-  final TextEditingController standardController = TextEditingController();
-  final TextEditingController positionController = TextEditingController();
-  final TextEditingController statusController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
-  final TextEditingController contactController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController imagesController = TextEditingController();
+  final TextEditingController nameCtr = TextEditingController();
+  final TextEditingController topicCtr = TextEditingController();
+  final TextEditingController materiCtr = TextEditingController();
+  final TextEditingController dateCtr = TextEditingController();
+  final TextEditingController startTimeCtr = TextEditingController();
+  final TextEditingController finishTimeCtr = TextEditingController();
+  final TextEditingController picNameCtr = TextEditingController();
+  final TextEditingController picCollageCtr = TextEditingController();
+  final TextEditingController activityCtr = TextEditingController();
+  final TextEditingController descriptionCtr = TextEditingController();
+  List<StudentEntity> student = [];
+  List<StudentEntity> resultStudent = [];
+  StudentEntity? selectedStudent;
 
   @override
   void initState() {
     super.initState();
+    context.read<CoachingBloc>().add(GetStudentCEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
-        if (state is CreateCoachingLoading) {
+        if (state is CreateCoachingLoading || state is CreateCoachingLoading) {
           LoadingDialog.show(context);
         } else if (state is CreateCoachingSuccess) {
           LoadingDialog.hide(context);
           context.showSuccesSnackBar(
-            'StringResources.loadCreatedSuccess',
+            state.message,
             onNavigate: () {}, // bottom close
           );
+          Future.delayed(const Duration(milliseconds: 2500), () {
+            AppNavigator.pop();
+          });
         } else if (state is CreateCoachingFailure) {
+          LoadingDialog.hide(context);
+          context.showErrorSnackBar(
+            state.message,
+            onNavigate: () {}, // bottom close
+          );
+        } else if (state is GetStudentCFailure) {
           LoadingDialog.hide(context);
           context.showErrorSnackBar(
             state.message,
@@ -59,7 +73,15 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
           );
         }
       },
-      child: bodyForm(),
+      child: BlocBuilder<CoachingBloc, CoachingState>(
+        builder: (context, state) {
+          if (state is GetStudentCLoaded) {
+            student = state.student;
+            LoadingDialog.hide(context);
+          }
+          return bodyForm();
+        },
+      ),
     );
   }
 
@@ -73,7 +95,7 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'StringResources.employeCreatedPage',
+          StringResources.studentCreated,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: blackTextstyle.copyWith(
@@ -89,83 +111,143 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
             children: [
               const SizedBox(height: 16),
               CustomTextField(
-                controller: nameController,
-                label: 'StringResources',
+                controller: nameCtr,
+                label: StringResources.cName,
                 onChanged: (value) {
                   checkingInput(value);
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: ktpController,
-                label: 'StringResources',
+                controller: topicCtr,
+                label: StringResources.cTopic,
                 onChanged: (value) {
                   checkingInput(value);
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: idCardController,
-                label: 'StringResources',
-                enabled: false,
+                controller: materiCtr,
+                label: StringResources.cMateri,
+                onChanged: (value) {
+                  checkingInput(value);
+                },
+              ),
+              const SizedBox(height: 16),
+              CustomDateField(
+                controller: dateCtr,
+                label: StringResources.cDate,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTimeField(
+                      controller: startTimeCtr,
+                      label: StringResources.cStartTime,
+                    ),
+                  ),
+                  const SizedBox(width: 16), // Jarak antar field
+                  Expanded(
+                    child: CustomTimeField(
+                      controller: finishTimeCtr,
+                      label: StringResources.cFinishTime,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              CustomSearchField(
+                label: 'Pilih Siswa',
+                value: selectedStudent,
+                items: student,
+                onChanged: (val) {
+                  setDataSelect(val);
+                },
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: resultStudent.isNotEmpty
+                    ? Column(
+                        children: resultStudent.map((e) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey, // Ganti warna jika perlu
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    e.name,
+                                    style: blackTextstyle.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: medium,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      resultStudent.removeWhere(
+                                          (student) => student.id == e.id);
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.delete,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    : Center(
+                        child: Text(
+                          'Pilih dahulu murid dari list',
+                          style: blackTextstyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: activityCtr,
+                label: StringResources.cActivity,
                 onChanged: (value) {
                   checkingInput(value);
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: sakController,
-                label: 'StringResources',
-                enabled: false,
+                controller: descriptionCtr,
+                label: StringResources.cDesc,
                 onChanged: (value) {
                   checkingInput(value);
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: standardController,
-                label: 'StringResources',
-                enabled: false,
+                controller: picNameCtr,
+                label: StringResources.cPicName,
                 onChanged: (value) {
                   checkingInput(value);
                 },
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: positionController,
-                label: 'StringResources',
-                onChanged: (value) {
-                  checkingInput(value);
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: statusController,
-                label: 'StringResources',
-                onChanged: (value) {
-                  checkingInput(value);
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: addressController,
-                label: 'StringResources',
-                onChanged: (value) {
-                  checkingInput(value);
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: contactController,
-                label: 'StringResources',
-                onChanged: (value) {
-                  checkingInput(value);
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: emailController,
-                label: 'StringResources',
+                controller: picCollageCtr,
+                label: StringResources.cPicCollage,
                 onChanged: (value) {
                   checkingInput(value);
                 },
@@ -200,21 +282,20 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
   }
 
   void created() {
-    final coaching = CoachingEntity(
+    String resultMembers = resultStudent.map((e) => e.id).join(', ');
+    final coaching = CoachEntity(
       id: '', // Akan digenerate UUID di repository
-      ktp: ktpController.text,
-      idCard: idCardController.text,
-      name: nameController.text,
-      sak: sakController.text,
-      standard: standardController.text,
-      isActive: true,
-      position: positionController.text,
-      status: statusController.text,
-      address: addressController.text,
-      contact: contactController.text,
-      email: emailController.text,
-      images: '',
-      isDeleted: false,
+      name: nameCtr.text,
+      topic: topicCtr.text,
+      learning: materiCtr.text,
+      date: dateCtr.text,
+      timeStart: startTimeCtr.text,
+      timeFinish: finishTimeCtr.text,
+      members: resultMembers,
+      picName: picNameCtr.text,
+      picCollage: picCollageCtr.text,
+      activity: activityCtr.text,
+      description: descriptionCtr.text,
       createdOn: DateTime.now().toIso8601String(),
       updatedOn: DateTime.now().toIso8601String(),
     );
@@ -222,18 +303,19 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
   }
 
   bool chengigData() {
-    bool result = true;
-    if (ktpController.text.isNotEmpty &&
-        nameController.text.isNotEmpty &&
-        idCardController.text.isNotEmpty &&
-        sakController.text.isNotEmpty &&
-        standardController.text.isNotEmpty &&
-        positionController.text.isNotEmpty &&
-        statusController.text.isNotEmpty &&
-        addressController.text.isNotEmpty &&
-        contactController.text.isNotEmpty &&
-        emailController.text.isNotEmpty) {
+    bool result = false;
+    if (nameCtr.text.isNotEmpty &&
+        topicCtr.text.isNotEmpty &&
+        materiCtr.text.isNotEmpty &&
+        dateCtr.text.isNotEmpty &&
+        startTimeCtr.text.isNotEmpty &&
+        finishTimeCtr.text.isNotEmpty &&
+        picCollageCtr.text.isNotEmpty &&
+        picNameCtr.text.isNotEmpty &&
+        resultStudent.isNotEmpty) {
       result = true;
+    } else {
+      snackbarError('Mohon isi semua data');
     }
     return result;
   }
@@ -243,5 +325,18 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
       message,
       onNavigate: () {}, // bottom close
     );
+  }
+
+  void setDataSelect(StudentEntity? val) {
+    if (val != null) {
+      selectedStudent = val;
+      final alreadyExists = resultStudent.any((e) => e.id == val.id);
+      if (!alreadyExists) {
+        resultStudent.add(val);
+      } else {
+        snackbarError('Murid sudah terdaftar');
+      }
+      setState(() {});
+    }
   }
 }

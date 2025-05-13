@@ -48,7 +48,7 @@ class DatabaseService {
       'CREATE TABLE students(_id TEXT PRIMARY KEY, name TEXT, class TEXT, gender TEXT, collage TEXT, tlpn TEXT, active TEXT, created_on TEXT, updated_on TEXT)',
     );
     await db.execute(
-      'CREATE TABLE members(_id TEXT PRIMARY KEY, coach_id TEXT, student_id TEXT, name TEXT, class TEXT, ttd TEXT, created_on TEXT, updated_on TEXT)',
+      'CREATE TABLE members(_id TEXT PRIMARY KEY, coach_id TEXT, student_id TEXT, name TEXT, class TEXT, ttd TEXT, created_on TEXT)',
     );
     await db.execute(
       'CREATE TABLE coaches(_id TEXT PRIMARY KEY, name TEXT, topic TEXT, learning TEXT, date TEXT, time_start TEXT, time_finish TEXT, pic_name TEXT, pic_collage TEXT, members TEXT, activity TEXT, description TEXT, created_on TEXT, updated_on TEXT)',

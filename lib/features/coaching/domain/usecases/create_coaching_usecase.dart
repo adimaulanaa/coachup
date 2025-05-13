@@ -8,7 +8,7 @@ class CreateCoachingUseCase {
 
   CreateCoachingUseCase(this.repository);
 
-  Future<Either<Failure, String>> call(CoachingEntity entity) async {
+  Future<Either<Failure, String>> call(CoachEntity entity) async {
     return await repository.createCoaching(entity);
   }
 }

@@ -1,7 +1,9 @@
+import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
@@ -22,9 +24,10 @@ class CoachingPage extends StatefulWidget {
 }
 
 class _CoachingPageState extends State<CoachingPage> {
-  List<CoachingEntity> coachings = [];
-  List<CoachingEntity> filterCoachings = [];
+  List<CoachEntity> coaching = [];
+  List<CoachEntity> filterCoaching = [];
   TextEditingController searchController = TextEditingController();
+  bool initialized = false;
 
   @override
   void initState() {
@@ -34,7 +37,6 @@ class _CoachingPageState extends State<CoachingPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
         if (state is GetCoachingLoading) {
@@ -50,17 +52,21 @@ class _CoachingPageState extends State<CoachingPage> {
       child: BlocBuilder<CoachingBloc, CoachingState>(
         builder: (context, state) {
           if (state is GetCoachingLoaded) {
-            coachings = state.coachings;
-            filterCoachings = coachings;
+            coaching = state.coaching;
+            if (!initialized) {
+              filterCoaching = coaching;
+              initialized = true;
+            }
             LoadingDialog.hide(context);
           }
-          return bodyForm(size);
+          return bodyForm();
         },
       ),
     );
   }
 
-  Widget bodyForm(Size size) {
+  Widget bodyForm() {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColors.bgGrey,
       appBar: AppBar(
@@ -69,7 +75,7 @@ class _CoachingPageState extends State<CoachingPage> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'StringResources.employePage',
+          StringResources.coach,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: blackTextstyle.copyWith(
@@ -171,13 +177,16 @@ class _CoachingPageState extends State<CoachingPage> {
                 ],
               ),
               const SizedBox(height: 10),
-              filterCoachings.isNotEmpty
+              filterCoaching.isNotEmpty
                   ? Column(
-                      children: filterCoachings.map((e) {
+                      children: filterCoaching.map((e) {
                         return listCoaching(size, e);
                       }).toList(),
                     )
-                  : SizedBox.shrink()
+                  : EmptyListData(
+                      size: size,
+                      message: 'Tidak ada data Pelatihan',
+                    ),
             ],
           ),
         ),
@@ -185,7 +194,7 @@ class _CoachingPageState extends State<CoachingPage> {
     );
   }
 
-  Widget listCoaching(Size size, CoachingEntity e) {
+  Widget listCoaching(Size size, CoachEntity e) {
     return InkWell(
       onTap: () async {
         // Melakukan navigasi ke halaman detail
@@ -209,22 +218,6 @@ class _CoachingPageState extends State<CoachingPage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Kotak untuk foto
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.grey[300], // Placeholder warna
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: e.isActive
-                      ? AppColors.bgTrans
-                      : AppColors.bgGreySecond, // Warna border merah
-                  width: 2, // Ketebalan border
-                ),
-              ),
-              child: const Icon(Icons.person, size: 30, color: Colors.grey),
-            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -239,7 +232,15 @@ class _CoachingPageState extends State<CoachingPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    e.position, // Pastikan ada field subtitle
+                    e.topic,
+                    style: blackTextstyle.copyWith(
+                      fontSize: 13,
+                      fontWeight: medium,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    e.learning,
                     style: blackTextstyle.copyWith(
                       fontSize: 13,
                       fontWeight: medium,
@@ -255,30 +256,25 @@ class _CoachingPageState extends State<CoachingPage> {
   }
 
   void navCreated() async {
-    // Melakukan navigasi ke halaman detail
     await AppNavigator.push(
       const CreatedCoachingPage(),
       transition: TransitionType.fade,
     );
     if (mounted) {
-      // Lakukan refresh atau panggil event untuk mengambil data coaching
+      initialized = false; // reset biar filter di-refresh
       context.read<CoachingBloc>().add(GetCoachingEvent());
     }
   }
 
   void search(String query) {
     final lowerCaseQuery = query.toLowerCase(); // Pencarian berdasarkan nama
-    List<CoachingEntity> init = coachings;
-    filterCoachings = [];
-    if (lowerCaseQuery != '') {
-      filterCoachings = init.where((e) {
-        final applicantName = e.name.toLowerCase();
-        // Pencocokan query dengan nama pelamar
-        bool matchesQuery = applicantName.contains(lowerCaseQuery);
-        return matchesQuery;
-      }).toList();
+    filterCoaching = [];
+    if (lowerCaseQuery.isEmpty) {
+      filterCoaching = coaching;
     } else {
-      filterCoachings = coachings;
+      filterCoaching = coaching
+          .where((e) => e.name.toLowerCase().contains(lowerCaseQuery))
+          .toList();
     }
     setState(() {});
   }

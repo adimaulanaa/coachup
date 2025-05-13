@@ -1,5 +1,15 @@
 import 'package:coachup/core/network/dio_client.dart';
 import 'package:coachup/core/network/network_info.dart';
+import 'package:coachup/features/coaching/data/datasources/coaching_local_datasource.dart';
+import 'package:coachup/features/coaching/data/datasources/coaching_remote_datasource.dart';
+import 'package:coachup/features/coaching/data/repositories/coaching_repository_impl.dart';
+import 'package:coachup/features/coaching/domain/repositories/coaching_repository.dart';
+import 'package:coachup/features/coaching/domain/usecases/create_coaching_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/delete_coaching_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/get_coaching_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/get_studentc_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/update_coaching_usecase.dart';
+import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/dashboard/data/datasources/dashboard_local_datasource.dart';
 import 'package:coachup/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
 import 'package:coachup/features/dashboard/data/repositories/dashboard_repository_impl.dart';
@@ -43,6 +53,33 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<DashboardLocalDataSource>(
     () => DashboardLocalDataSourceImpl(),
+  );
+
+  //! ✅ Features - Coaching
+  sl.registerFactory(() => CoachingBloc(
+        sl<CreateCoachingUseCase>(),
+        sl<GetCoachingUseCase>(),
+        sl<UpdateCoachingUseCase>(),
+        sl<DeleteCoachingUseCase>(),
+        sl<GetStudentCUseCase>(),
+      ));
+  sl.registerLazySingleton(() => GetCoachingUseCase(sl()));
+  sl.registerLazySingleton(() => CreateCoachingUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateCoachingUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteCoachingUseCase(sl()));
+  sl.registerLazySingleton(() => GetStudentCUseCase(sl()));
+  sl.registerLazySingleton<CoachingRepository>(
+    () => CoachingRepositoryImpl(
+      sl<CoachingRemoteDataSource>(),
+      sl<CoachingLocalDataSource>(),
+      sl<NetworkInfo>(),
+    ),
+  );
+  sl.registerLazySingleton<CoachingRemoteDataSource>(
+    () => CoachingRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<CoachingLocalDataSource>(
+    () => CoachingLocalDataSourceImpl(),
   );
 
   //! ✅ Features - Students

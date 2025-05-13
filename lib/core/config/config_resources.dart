@@ -30,4 +30,20 @@ class StringResources {
   static const String sCollage = "Sekolah Murid";
   static const String sPhone = "Tlpn Murid";
   static const String sActive = "Aktif";
+
+  //! Core Network
+  static const String coach = "Coaches Page";
+  static const String coachCreated = "Created Coaches Page";
+  static const String coachEdited = "Edited Coaches Page";
+  static const String cName = "Nama Pelatihan";
+  static const String cTopic = "Topic Pelatihan";
+  static const String cMateri = "Materi Pelatihan";
+  static const String cDate = "Tanggal";
+  static const String cStartTime = "Waktu Mulai";
+  static const String cFinishTime = "Waktu Selesai";
+  static const String cActivity = "Aktifitas Pelatihan";
+  static const String cDesc = "Deskripsi Pelatihan";
+  static const String cPicName = "Nama Penanggung Jawab Sekolah";
+  static const String cPicCollage = "Nama Sekolah Pelatihan";
+
 }

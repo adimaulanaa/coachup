@@ -7,7 +7,7 @@ abstract class CoachingEvent extends Equatable {
 }
 
 class CreateCoachingEvent extends CoachingEvent {
-  final CoachingEntity coaching;
+  final CoachEntity coaching;
 
   const CreateCoachingEvent(this.coaching);
   
@@ -21,7 +21,7 @@ class GetCoachingEvent extends CoachingEvent {
 }
 
 class UpdateCoachingEvent extends CoachingEvent {
-  final CoachingEntity coaching;
+  final CoachEntity coaching;
 
   const UpdateCoachingEvent(this.coaching);
   
@@ -45,4 +45,9 @@ class GetIdHistoryEvent extends CoachingEvent {
   
   @override
   List<Object?> get props => [id];
+}
+
+class GetStudentCEvent extends CoachingEvent {
+  @override
+  List<Object?> get props => [];
 }

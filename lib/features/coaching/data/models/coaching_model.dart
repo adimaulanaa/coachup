@@ -1,64 +1,97 @@
+
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 
-class CoachingModel extends CoachingEntity {
-  const CoachingModel({
+class CoachModel extends CoachEntity {
+  CoachModel({
     required super.id,
-    required super.idCard,
-    required super.ktp,
     required super.name,
-    required super.sak,
-    required super.standard,
-    required super.isActive,
-    required super.position,
-    required super.status,
-    required super.address,
-    required super.contact,
-    required super.email,
-    required super.images,
-    required super.isDeleted,
+    required super.topic,
+    required super.learning,
+    required super.date,
+    required super.timeStart,
+    required super.timeFinish,
+    required super.picName,
+    required super.picCollage,
+    required super.members,
+    required super.activity,
+    required super.description,
     required super.createdOn,
     required super.updatedOn,
   });
 
-  factory CoachingModel.fromJson(Map<String, dynamic> json) {
-    return CoachingModel(
-      id: json['_id'],
-      ktp: json['ktp'],
-      idCard: json['id_card'],
-      name: json['name'],
-      sak: json['sak'],
-      standard: json['standard'],
-      isActive: json['is_active'] == 'true',
-      position: json['position'],
-      status: json['status'],
-      address: json['address'],
-      contact: json['contact'],
-      email: json['email'],
-      images: json['images'],
-      isDeleted: json['is_deleted'] == 'true',
-      createdOn: json['created_on'],
-      updatedOn: json['updated_on'],
+  factory CoachModel.fromMap(Map<String, dynamic> map) {
+    return CoachModel(
+      id: map['_id'],
+      name: map['name'],
+      topic: map['topic'],
+      learning: map['learning'],
+      date: map['date'],
+      timeStart: map['time_start'],
+      timeFinish: map['time_finish'],
+      picName: map['pic_name'],
+      picCollage: map['pic_collage'],
+      members: map['members'],
+      activity: map['activity'],
+      description: map['description'],
+      createdOn: map['created_on'],
+      updatedOn: map['updated_on'],
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       '_id': id,
-      'ktp': ktp,
-      'id_card': idCard,
       'name': name,
-      'sak': sak,
-      'standard': standard,
-      'is_active': isActive.toString(), // simpan sebagai string "true"/"false"
-      'position': position,
-      'status': status,
-      'address': address,
-      'contact': contact,
-      'email': email,
-      'images': images,
-      'is_deleted': isDeleted.toString(), // simpan sebagai string juga
+      'topic': topic,
+      'learning': learning,
+      'date': date,
+      'time_start': timeStart,
+      'time_finish': timeFinish,
+      'pic_name': picName,
+      'pic_collage': picCollage,
+      'members': members,
+      'activity': activity,
+      'description': description,
       'created_on': createdOn,
       'updated_on': updatedOn,
     };
+  }
+
+  CoachEntity toEntity() {
+    return CoachEntity(
+      id: id,
+      name: name,
+      topic: topic,
+      learning: learning,
+      date: date,
+      timeStart: timeStart,
+      timeFinish: timeFinish,
+      picName: picName,
+      picCollage: picCollage,
+      members: members,
+      activity: activity,
+      description: description,
+      createdOn: createdOn,
+      updatedOn: updatedOn,
+    );
+  }
+
+  static CoachModel fromEntity(CoachEntity entity) {
+    return CoachModel(
+      id: entity.id,
+      name: entity.name,
+      topic: entity.topic,
+      learning: entity.learning,
+      date: entity.date,
+      timeStart: entity.timeStart,
+      timeFinish: entity.timeFinish,
+      picName: entity.picName,
+      picCollage: entity.picCollage,
+      members: entity.members,
+      activity: entity.activity,
+      description: entity.description,
+      createdOn: entity.createdOn,
+      updatedOn: entity.updatedOn,
+    );
   }
 }
