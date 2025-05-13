@@ -37,9 +37,9 @@ class CreateStudentsFailure extends StudentsState {
 }
 
 class GetStudentsLoaded extends StudentsState {
-  final List<StudentEntity> studentss;
+  final List<StudentEntity> students;
 
-  const GetStudentsLoaded(this.studentss);
+  const GetStudentsLoaded(this.students);
 }
 
 class GetStudentsFailure extends StudentsState {

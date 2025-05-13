@@ -24,8 +24,8 @@ class StudentsPage extends StatefulWidget {
 }
 
 class _StudentsPageState extends State<StudentsPage> {
-  List<StudentEntity> studentss = [];
-  List<StudentEntity> filterStudentss = [];
+  List<StudentEntity> students = [];
+  List<StudentEntity> filterStudents = [];
   TextEditingController searchController = TextEditingController();
   bool initialized = false;
 
@@ -53,9 +53,9 @@ class _StudentsPageState extends State<StudentsPage> {
       child: BlocBuilder<StudentsBloc, StudentsState>(
         builder: (context, state) {
           if (state is GetStudentsLoaded) {
-            studentss = state.studentss;
+            students = state.students;
             if (!initialized) {
-              filterStudentss = studentss;
+              filterStudents = students;
               initialized = true;
             }
             LoadingDialog.hide(context);
@@ -177,15 +177,15 @@ class _StudentsPageState extends State<StudentsPage> {
                 ],
               ),
               const SizedBox(height: 10),
-              filterStudentss.isNotEmpty
+              filterStudents.isNotEmpty
                   ? Column(
-                      children: filterStudentss.map((e) {
+                      children: filterStudents.map((e) {
                         return listStudents(size, e);
                       }).toList(),
                     )
                   : EmptyListData(
                       size: size,
-                      message: 'Tidak ada data employee',
+                      message: 'Tidak ada data Murid',
                     ),
             ],
           ),
@@ -260,11 +260,11 @@ class _StudentsPageState extends State<StudentsPage> {
 
   void search(String query) {
     final lowerCaseQuery = query.toLowerCase(); // Pencarian berdasarkan nama
-    filterStudentss = [];
+    filterStudents = [];
     if (lowerCaseQuery.isEmpty) {
-      filterStudentss = studentss;
+      filterStudents = students;
     } else {
-      filterStudentss = studentss
+      filterStudents = students
           .where((e) => e.name.toLowerCase().contains(lowerCaseQuery))
           .toList();
     }

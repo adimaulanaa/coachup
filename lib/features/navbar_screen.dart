@@ -45,7 +45,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
               _navItem(0, MediaRes.dashboard, 25),
               _navItem(1, MediaRes.employee, 25),
               _navItem(2, MediaRes.report, 25),
-              _navItem(4, MediaRes.profile, 25),
+              _navItem(3, MediaRes.profile, 25),
             ],
           ),
         ),
