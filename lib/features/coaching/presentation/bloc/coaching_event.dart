@@ -38,10 +38,10 @@ class DeleteCoachingEvent extends CoachingEvent {
   List<Object?> get props => [id];
 }
 
-class GetIdHistoryEvent extends CoachingEvent {
+class DetailCoachingEvent extends CoachingEvent {
   final String id;
 
-  const GetIdHistoryEvent(this.id);
+  const DetailCoachingEvent(this.id);
   
   @override
   List<Object?> get props => [id];

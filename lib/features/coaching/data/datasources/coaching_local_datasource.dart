@@ -1,6 +1,7 @@
 import 'package:coachup/core/error/exceptions.dart';
 import 'package:coachup/features/coaching/data/models/coaching_model.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
+import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
 import 'package:coachup/features/services/database_service.dart';
 import 'package:coachup/features/students/data/models/students_model.dart';
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
@@ -13,6 +14,7 @@ abstract class CoachingLocalDataSource {
   Future<String> deleteCoaching(String id);
   Future<List<CoachEntity>> getCoaching();
   Future<List<StudentEntity>> getStudentc();
+  Future<DetailCoachingEntity> detailCoaching(String id);
 }
 
 class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
@@ -96,7 +98,7 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
       throw BadRequestException('Gagal menghapus coach');
     }
   }
-  
+
   @override
   Future<List<StudentEntity>> getStudentc() async {
     final database = await db.database;
@@ -104,5 +106,60 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
     List<StudentEntity> model =
         maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
     return model;
+  }
+
+  @override
+  Future<DetailCoachingEntity> detailCoaching(String id) async {
+    final database = await db.database;
+
+    final List<Map<String, dynamic>> coachMaps = await database.query(
+      'coaches',
+      where: '_id = ?',
+      whereArgs: [id],
+    );
+
+    // student
+    final List<Map<String, dynamic>> maps = await database.query('students');
+    List<StudentEntity> modelStudent =
+        maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
+
+    if (coachMaps.isNotEmpty) {
+      final map = coachMaps.first;
+
+      // Konversi field 'members' (comma-separated) menjadi List<String>
+    final List<String> idList = (map['members'] as String)
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    // Filter student yang ID-nya ada di idList
+    final List<StudentEntity> selectedMembers = modelStudent
+        .where((student) => idList.contains(student.id))
+        .toList();
+
+      // Sesuaikan ini dengan field yang kamu punya di tabel "coaches"
+      final model = DetailCoachingEntity(
+        id: map['_id'] ?? '',
+        name: map['name'] ?? '',
+        topic: map['topic'] ?? '',
+        learning: map['learning'] ?? '',
+        date: map['date'] ?? '',
+        timeStart: map['time_start'] ?? '',
+        timeFinish: map['time_finish'] ?? '',
+        picName: map['pic_name'] ?? '',
+        picCollage: map['pic_collage'] ?? '',
+        members: selectedMembers,
+        allStudent: modelStudent,
+        activity: map['activity'] ?? '',
+        description: map['description'] ?? '',
+        createdOn: map['created_on'] ?? '',
+        updatedOn: map['updated_on'] ?? '',
+      );
+      return model;
+    } else {
+      // Handle jika data tidak ditemukan
+      throw Exception('Data not found');
+    }
   }
 }

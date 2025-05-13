@@ -1,4 +1,5 @@
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
+import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:equatable/equatable.dart';
 
@@ -20,6 +21,8 @@ class UpdateCoachingLoading extends CoachingState {}
 class DeleteCoachingLoading extends CoachingState {}
 
 class GetStudentCLoading extends CoachingState {}
+
+class DetailCoachingLoading extends CoachingState {}
 
 class CreateCoachingSuccess extends CoachingState {
   final String message;
@@ -100,6 +103,21 @@ class GetStudentCFailure extends CoachingState {
   final String message;
 
   const GetStudentCFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class DetailCoachingLoaded extends CoachingState {
+  final DetailCoachingEntity detail;
+
+  const DetailCoachingLoaded(this.detail);
+}
+
+class DetailCoachingFailure extends CoachingState {
+  final String message;
+
+  const DetailCoachingFailure(this.message);
 
   @override
   List<Object?> get props => [message];

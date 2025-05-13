@@ -6,10 +6,12 @@ import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
+import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_event.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_state.dart';
-import 'package:coachup/features/coaching/presentation/widget/gender_button.dart';
+import 'package:coachup/features/coaching/presentation/widget/view_add_student.dart';
+import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,18 +25,26 @@ class DetailCoachingPage extends StatefulWidget {
 
 class _DetailCoachingPageState extends State<DetailCoachingPage> {
   bool isEdit = false;
-  late TextEditingController idController;
-  late TextEditingController nameController;
-  late TextEditingController classController;
-  late TextEditingController collageController;
-  late TextEditingController phoneController;
-  bool isActive = false;
-  String selectedGender = '';
+  final TextEditingController idCtr = TextEditingController();
+  final TextEditingController nameCtr = TextEditingController();
+  final TextEditingController topicCtr = TextEditingController();
+  final TextEditingController materiCtr = TextEditingController();
+  final TextEditingController dateCtr = TextEditingController();
+  final TextEditingController startTimeCtr = TextEditingController();
+  final TextEditingController finishTimeCtr = TextEditingController();
+  final TextEditingController picNameCtr = TextEditingController();
+  final TextEditingController picCollageCtr = TextEditingController();
+  final TextEditingController activityCtr = TextEditingController();
+  final TextEditingController descriptionCtr = TextEditingController();
+  DetailCoachingEntity detail = DetailCoachingEntity();
+  List<StudentEntity> student = [];
+  List<StudentEntity> resultStudent = [];
+  StudentEntity? selectedStudent;
 
   @override
   void initState() {
     super.initState();
-    setData();
+    context.read<CoachingBloc>().add(DetailCoachingEvent(widget.coaching.id));
   }
 
   @override
@@ -42,7 +52,9 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
         // Menangani efek samping untuk loading dan snackbar/error
-        if (state is UpdateCoachingLoading || state is DeleteCoachingLoading) {
+        if (state is UpdateCoachingLoading ||
+            state is DeleteCoachingLoading ||
+            state is DetailCoachingLoading) {
           // Menampilkan dialog loading jika diperlukan
           LoadingDialog.show(context); // Menampilkan loading dialog
         } else if (state is UpdateCoachingSuccess) {
@@ -64,6 +76,11 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
       },
       child: BlocBuilder<CoachingBloc, CoachingState>(
         builder: (context, state) {
+          if (state is DetailCoachingLoaded) {
+            detail = state.detail;
+            LoadingDialog.hide(context);
+            setData();
+          }
           return bodyForm();
         },
       ),
@@ -120,30 +137,141 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: nameCtr,
+                label: StringResources.cName,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: topicCtr,
+                label: StringResources.cTopic,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: materiCtr,
+                label: StringResources.cMateri,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomDateField(
+                controller: dateCtr,
+                label: StringResources.cDate,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    StringResources.sActive,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 15,
-                      fontWeight: medium,
+                  Expanded(
+                    child: CustomTimeField(
+                      controller: startTimeCtr,
+                      label: StringResources.cStartTime,
+                      enabled: isEdit,
                     ),
                   ),
-                  Switch(
-                    value: isActive,
-                    onChanged: isEdit
-                        ? (val) {
-                            setState(() {
-                              isActive = val;
-                            });
-                          }
-                        : null,
-                  )
+                  const SizedBox(width: 16), // Jarak antar field
+                  Expanded(
+                    child: CustomTimeField(
+                      controller: finishTimeCtr,
+                      label: StringResources.cFinishTime,
+                      enabled: isEdit,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
-              buildEditForm(),
+              CustomSearchField(
+                label: 'Pilih Siswa',
+                value: selectedStudent,
+                enabled: isEdit,
+                items: student,
+                onChanged: (val) {
+                  setDataSelect(val);
+                },
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: resultStudent.isNotEmpty
+                    ? Column(
+                        children: resultStudent.map((e) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey, // Ganti warna jika perlu
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    e.name,
+                                    style: blackTextstyle.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: medium,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                InkWell(
+                                  onTap: () {
+                                    if (isEdit) {
+                                      setState(() {
+                                        resultStudent.removeWhere(
+                                            (student) => student.id == e.id);
+                                      });
+                                    }
+                                  },
+                                  child: const Icon(
+                                    Icons.delete,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    : Center(
+                        child: Text(
+                          'Pilih dahulu murid dari list',
+                          style: blackTextstyle.copyWith(
+                            fontSize: 14,
+                            fontWeight: medium,
+                          ),
+                        ),
+                      ),
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: activityCtr,
+                label: StringResources.cActivity,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: descriptionCtr,
+                label: StringResources.cDesc,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: picNameCtr,
+                label: StringResources.cPicName,
+                enabled: isEdit,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: picCollageCtr,
+                label: StringResources.cPicCollage,
+                enabled: isEdit,
+              ),
               const SizedBox(height: 16),
             ],
           ),
@@ -152,77 +280,33 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
     );
   }
 
-  Widget buildEditForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomTextField(
-          controller: nameController,
-          label: StringResources.sName,
-          enabled: isEdit,
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          controller: classController,
-          label: StringResources.sClass,
-          enabled: isEdit,
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: GenderButton(
-                gender: StringResources.male,
-                selectedGender: selectedGender,
-                enabled: isEdit,
-                onSelect: handleGenderSelect,
-              ),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: GenderButton(
-                gender: StringResources.female,
-                selectedGender: selectedGender,
-                enabled: isEdit,
-                onSelect: handleGenderSelect,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          controller: collageController,
-          label: StringResources.sCollage,
-          enabled: isEdit,
-        ),
-        const SizedBox(height: 16),
-        CustomTextField(
-          controller: phoneController,
-          label: StringResources.sPhone,
-          enabled: isEdit,
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+  void setData() {
+    idCtr.text = detail.id ?? '';
+    nameCtr.text = detail.name ?? '';
+    topicCtr.text = detail.topic ?? '';
+    materiCtr.text = detail.learning ?? '';
+    dateCtr.text = detail.date ?? '';
+    startTimeCtr.text = detail.timeStart ?? '';
+    finishTimeCtr.text = detail.timeFinish ?? '';
+    picNameCtr.text = detail.picName ?? '';
+    picCollageCtr.text = detail.picCollage ?? '';
+    activityCtr.text = detail.activity ?? '';
+    descriptionCtr.text = detail.description ?? '';
+    student = detail.allStudent;
+    resultStudent = detail.members;
   }
 
-  void setData() {
-    // idController = TextEditingController(text: widget.coaching.id);
-    // nameController = TextEditingController(text: widget.coaching.name);
-    // classController = TextEditingController(text: widget.coaching.studentClass);
-    // collageController = TextEditingController(text: widget.coaching.collage);
-    // phoneController = TextEditingController(text: widget.coaching.phone);
-    // if (widget.coaching.gender == StringResources.male) {
-    //   selectedGender = StringResources.male;
-    // } else if (widget.coaching.gender == StringResources.female) {
-    //   selectedGender = StringResources.female;
-    // }
-    // if (widget.coaching.active == 'true') {
-    //   isActive = true;
-    // } else {
-    //   isActive = false;
-    // }
+  void setDataSelect(StudentEntity? val) {
+    if (val != null) {
+      selectedStudent = val;
+      final alreadyExists = resultStudent.any((e) => e.id == val.id);
+      if (!alreadyExists) {
+        resultStudent.add(val);
+      } else {
+        snackbarError('Murid sudah terdaftar');
+      }
+      setState(() {});
+    }
   }
 
   void toggleEdit() {
@@ -231,26 +315,31 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
     });
   }
 
-  void handleGenderSelect(String gender) {
-    if (isEdit) {
-      setState(() {
-        selectedGender = gender;
-      });
-    }
+  void snackbarError(String message) {
+    return context.showErrorSnackBar(
+      message,
+      onNavigate: () {}, // bottom close
+    );
   }
 
   void saveChanges() {
-    // final coaching = StudentEntity(
-    //   id: widget.coaching.id,
-    //   name: nameController.text,
-    //   studentClass: classController.text,
-    //   gender: selectedGender,
-    //   collage: collageController.text,
-    //   phone: phoneController.text,
-    //   active: isActive ? 'true' : 'false',
-    //   createdOn: widget.coaching.createdOn,
-    //   updatedOn: DateTime.now().toIso8601String(),
-    // );
-    // context.read<CoachingBloc>().add(UpdateCoachingEvent(coaching));
+    String resultMembers = resultStudent.map((e) => e.id).join(', ');
+    final coaching = CoachEntity(
+      id: idCtr.text, 
+      name: nameCtr.text,
+      topic: topicCtr.text,
+      learning: materiCtr.text,
+      date: dateCtr.text,
+      timeStart: startTimeCtr.text,
+      timeFinish: finishTimeCtr.text,
+      members: resultMembers,
+      picName: picNameCtr.text,
+      picCollage: picCollageCtr.text,
+      activity: activityCtr.text,
+      description: descriptionCtr.text,
+      createdOn: detail.createdOn ?? DateTime.now().toIso8601String(),
+      updatedOn: DateTime.now().toIso8601String(),
+    );
+    context.read<CoachingBloc>().add(UpdateCoachingEvent(coaching));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:coachup/features/coaching/domain/usecases/create_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/delete_coaching_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/detail_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_studentc_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/update_coaching_usecase.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
   final CreateCoachingUseCase create;
   final GetCoachingUseCase get;
+  final DetailCoachingUseCase detail;
   final UpdateCoachingUseCase update;
   final DeleteCoachingUseCase delete;
   final GetStudentCUseCase student;
@@ -19,7 +21,7 @@ class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
     this.get,
     this.update,
     this.delete,
-    this.student,
+    this.student, this.detail,
   ) : super(CoachingInitial()) {
     on<CreateCoachingEvent>((event, emit) async {
       emit(CreateCoachingLoading());
@@ -68,6 +70,16 @@ class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
       result.fold(
         (failure) => emit(GetStudentCFailure(failure.message)),
         (success) => emit(GetStudentCLoaded(success)),
+      );
+    });
+
+    on<DetailCoachingEvent>((event, emit) async {
+      emit(DetailCoachingLoading());
+
+      final result = await detail(event.id);
+      result.fold(
+        (failure) => emit(DetailCoachingFailure(failure.message)),
+        (success) => emit(DetailCoachingLoaded(success)),
       );
     });
   }

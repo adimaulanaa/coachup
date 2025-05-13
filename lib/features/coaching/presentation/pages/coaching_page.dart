@@ -53,10 +53,7 @@ class _CoachingPageState extends State<CoachingPage> {
         builder: (context, state) {
           if (state is GetCoachingLoaded) {
             coaching = state.coaching;
-            if (!initialized) {
-              filterCoaching = coaching;
-              initialized = true;
-            }
+            filterCoaching = coaching;
             LoadingDialog.hide(context);
           }
           return bodyForm();
@@ -203,6 +200,7 @@ class _CoachingPageState extends State<CoachingPage> {
           transition: TransitionType.fade,
         );
         if (mounted) {
+          initialized = false; // reset biar filter di-refresh
           // Lakukan refresh atau panggil event untuk mengambil data coaching
           context.read<CoachingBloc>().add(GetCoachingEvent());
         }
