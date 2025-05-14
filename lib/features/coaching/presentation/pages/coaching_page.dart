@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -15,6 +16,7 @@ import 'package:coachup/features/coaching/presentation/pages/detail_coaching_pag
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
 class CoachingPage extends StatefulWidget {
   const CoachingPage({super.key});
@@ -36,6 +38,12 @@ class _CoachingPageState extends State<CoachingPage> {
   }
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
@@ -53,7 +61,10 @@ class _CoachingPageState extends State<CoachingPage> {
         builder: (context, state) {
           if (state is GetCoachingLoaded) {
             coaching = state.coaching;
-            filterCoaching = coaching;
+            if (!initialized) {
+              filterCoaching = coaching;
+              initialized = true;
+            }
             LoadingDialog.hide(context);
           }
           return bodyForm();
@@ -93,7 +104,7 @@ class _CoachingPageState extends State<CoachingPage> {
                     child: TextFormField(
                       controller: searchController,
                       decoration: InputDecoration(
-                        hintText: 'Cari Nama...',
+                        hintText: 'Cari Nama Sekolah...',
                         hintStyle: transTextstyle.copyWith(
                           fontSize: 16,
                           fontWeight: light,
@@ -126,9 +137,7 @@ class _CoachingPageState extends State<CoachingPage> {
                         ),
                         suffixIcon: Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: InkWell(
-                            splashFactory: NoSplash.splashFactory,
-                            highlightColor: Colors.transparent,
+                          child: CustomInkWell(
                             onTap: () {
                               // Menghapus teks saat diklik
                               searchController.clear();
@@ -156,7 +165,7 @@ class _CoachingPageState extends State<CoachingPage> {
                     ),
                   ),
                   const SizedBox(width: 5),
-                  InkWell(
+                  CustomInkWell(
                     onTap: () {
                       navCreated();
                     },
@@ -192,7 +201,13 @@ class _CoachingPageState extends State<CoachingPage> {
   }
 
   Widget listCoaching(Size size, CoachEntity e) {
-    return InkWell(
+    DateTime parsedDate = DateTime.parse(e.date);
+    String formattedDate = DateFormat('d MMMM yyyy').format(parsedDate);
+    int member = 0;
+    if (e.members != '') {
+      member = e.members.split(',').length;
+    }
+    return CustomInkWell(
       onTap: () async {
         // Melakukan navigasi ke halaman detail
         await AppNavigator.push(
@@ -222,13 +237,20 @@ class _CoachingPageState extends State<CoachingPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    e.name,
+                    e.picCollage,
                     style: blackTextstyle.copyWith(
                       fontSize: 15,
-                      fontWeight: medium,
+                      fontWeight: bold,
                     ),
                   ),
                   const SizedBox(height: 4),
+                  Text(
+                    '$formattedDate, ${e.timeStart} - ${e.timeFinish}',
+                    style: blackTextstyle.copyWith(
+                      fontSize: 13,
+                      fontWeight: medium,
+                    ),
+                  ),
                   Text(
                     e.topic,
                     style: blackTextstyle.copyWith(
@@ -236,9 +258,18 @@ class _CoachingPageState extends State<CoachingPage> {
                       fontWeight: medium,
                     ),
                   ),
+                  Text(
+                    'Member : $member murid',
+                    style: blackTextstyle.copyWith(
+                      fontSize: 13,
+                      fontWeight: medium,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
-                    e.learning,
+                    'Deskripsi : ${e.description}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: blackTextstyle.copyWith(
                       fontSize: 13,
                       fontWeight: medium,
@@ -271,7 +302,7 @@ class _CoachingPageState extends State<CoachingPage> {
       filterCoaching = coaching;
     } else {
       filterCoaching = coaching
-          .where((e) => e.name.toLowerCase().contains(lowerCaseQuery))
+          .where((e) => e.picCollage.toLowerCase().contains(lowerCaseQuery))
           .toList();
     }
     setState(() {});

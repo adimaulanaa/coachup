@@ -1,5 +1,6 @@
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_res.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/features/coaching/presentation/pages/coaching_page.dart';
 import 'package:coachup/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:coachup/features/students/presentation/pages/students_page.dart';
@@ -57,7 +58,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
   Widget _navItem(int index, String iconPath, double sizeIcons) {
     bool isSelected = _selectedIndex == index;
 
-    return InkWell(
+    return CustomInkWell(
       onTap: () => _onItemTapped(index),
       child: Stack(
         alignment: Alignment.center,

@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_botton.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -193,7 +194,7 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                InkWell(
+                                CustomInkWell(
                                   onTap: () {
                                     setState(() {
                                       resultStudent.removeWhere(
@@ -224,6 +225,8 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
               CustomTextField(
                 controller: activityCtr,
                 label: StringResources.cActivity,
+                isDescription: true,
+                lines: 3,
                 onChanged: (value) {
                   checkingInput(value);
                 },
@@ -232,6 +235,8 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
               CustomTextField(
                 controller: descriptionCtr,
                 label: StringResources.cDesc,
+                isDescription: true,
+                lines: 5,
                 onChanged: (value) {
                   checkingInput(value);
                 },

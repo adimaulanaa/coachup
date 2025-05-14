@@ -1,5 +1,6 @@
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -29,9 +30,7 @@ extension SnackBarExtension on BuildContext {
                 ),
               ),
             ),
-            InkWell(
-              splashFactory: NoSplash.splashFactory,
-              highlightColor: Colors.transparent,
+            CustomInkWell(
               onTap: () {
                 scaffoldMessenger.hideCurrentSnackBar();
               },
@@ -81,9 +80,7 @@ extension SnackBarExtension on BuildContext {
                 ),
               ),
             ),
-            InkWell(
-              splashFactory: NoSplash.splashFactory,
-              highlightColor: Colors.transparent,
+            CustomInkWell(
               onTap: () {
                 scaffoldMessenger.hideCurrentSnackBar();
               },
@@ -133,9 +130,7 @@ extension SnackBarExtension on BuildContext {
                 ),
               ),
             ),
-            InkWell(
-              splashFactory: NoSplash.splashFactory,
-              highlightColor: Colors.transparent,
+            CustomInkWell(
               onTap: () {
                 scaffoldMessenger.hideCurrentSnackBar();
               },

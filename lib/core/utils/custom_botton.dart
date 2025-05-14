@@ -1,5 +1,6 @@
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -16,9 +17,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      splashFactory: NoSplash.splashFactory,
-      highlightColor: Colors.transparent,
+    return CustomInkWell(
       onTap: onTap,
       child: Container(
         height: 57,

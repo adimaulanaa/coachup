@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -129,9 +130,7 @@ class _StudentsPageState extends State<StudentsPage> {
                         ),
                         suffixIcon: Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: InkWell(
-                            splashFactory: NoSplash.splashFactory,
-                            highlightColor: Colors.transparent,
+                          child: CustomInkWell(
                             onTap: () {
                               // Menghapus teks saat diklik
                               searchController.clear();
@@ -159,7 +158,7 @@ class _StudentsPageState extends State<StudentsPage> {
                     ),
                   ),
                   const SizedBox(width: 5),
-                  InkWell(
+                  CustomInkWell(
                     onTap: () {
                       navCreated();
                     },
@@ -195,7 +194,7 @@ class _StudentsPageState extends State<StudentsPage> {
   }
 
   Widget listStudents(Size size, StudentEntity e) {
-    return InkWell(
+    return CustomInkWell(
       onTap: () async {
         // Melakukan navigasi ke halaman detail
         await AppNavigator.push(

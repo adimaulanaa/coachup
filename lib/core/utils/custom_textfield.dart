@@ -8,6 +8,8 @@ class CustomTextField extends StatefulWidget {
   final String label;
   final bool enabled;
   final ValueChanged<String>? onChanged;
+  final bool isDescription;
+  final int lines;
 
   const CustomTextField({
     super.key,
@@ -15,6 +17,8 @@ class CustomTextField extends StatefulWidget {
     required this.label,
     this.enabled = true,
     this.onChanged,
+    this.isDescription = false,
+    this.lines = 1,
   });
 
   @override
@@ -81,6 +85,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 fontWeight: medium,
                 // color: labelColor,
               ),
+              maxLines: widget.isDescription ? widget.lines : 1,
+              minLines: widget.isDescription ? widget.lines : 1,
+              keyboardType: widget.isDescription
+                  ? TextInputType.multiline
+                  : TextInputType.text,
+              textInputAction: widget.isDescription
+                  ? TextInputAction.newline
+                  : TextInputAction.done,
               decoration: InputDecoration(
                 labelText: widget.label,
                 labelStyle: transTextstyle.copyWith(
@@ -177,7 +189,8 @@ class _CustomDateFieldState extends State<CustomDateField> {
                   controller: widget.controller,
                   focusNode: _focusNode,
                   enabled: false,
-                  style: blackTextstyle.copyWith(fontSize: 15, fontWeight: medium),
+                  style:
+                      blackTextstyle.copyWith(fontSize: 15, fontWeight: medium),
                   decoration: InputDecoration(
                     labelText: widget.label,
                     labelStyle: transTextstyle.copyWith(
@@ -274,7 +287,8 @@ class _CustomTimeFieldState extends State<CustomTimeField> {
                   controller: widget.controller,
                   focusNode: _focusNode,
                   enabled: false,
-                  style: blackTextstyle.copyWith(fontSize: 15, fontWeight: medium),
+                  style:
+                      blackTextstyle.copyWith(fontSize: 15, fontWeight: medium),
                   decoration: InputDecoration(
                     labelText: widget.label,
                     labelStyle: transTextstyle.copyWith(

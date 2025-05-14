@@ -2,6 +2,7 @@ import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -219,7 +220,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                InkWell(
+                                CustomInkWell(
                                   onTap: () {
                                     if (isEdit) {
                                       setState(() {
@@ -253,12 +254,16 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
                 controller: activityCtr,
                 label: StringResources.cActivity,
                 enabled: isEdit,
+                isDescription: true,
+                lines: 3,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: descriptionCtr,
                 label: StringResources.cDesc,
                 enabled: isEdit,
+                isDescription: true,
+                lines: 5,
               ),
               const SizedBox(height: 16),
               CustomTextField(
