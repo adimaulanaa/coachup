@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_view_coach.dart';
+import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
@@ -241,9 +242,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     }).toList(),
                   )
-                : Column(
-                    children: [],
-                  )
+                : EmptyListData(
+                    size: size,
+                    message: 'Tidak ada data Pelatihan hari ini',
+                  ),
           ],
         ),
       ),
