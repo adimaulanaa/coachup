@@ -177,19 +177,19 @@ class _DashboardPageState extends State<DashboardPage> {
                           const TextSpan(
                               text: 'Saat ini, kamu tercatat memiliki '),
                           TextSpan(
-                            text: '4 pengajaran',
+                            text: '${dash.coach} pengajaran',
                             style: blackTextstyle.copyWith(
                                 fontWeight: FontWeight.bold),
                           ),
                           const TextSpan(text: ' di '),
                           TextSpan(
-                            text: '2 sekolah',
+                            text: '${dash.collage} sekolah',
                             style: blackTextstyle.copyWith(
                                 fontWeight: FontWeight.bold),
                           ),
                           const TextSpan(text: ', dengan total sekitar '),
                           TextSpan(
-                            text: '10 murid',
+                            text: '${dash.student} murid',
                             style: blackTextstyle.copyWith(
                                 fontWeight: FontWeight.bold),
                           ),
