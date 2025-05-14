@@ -6,10 +6,10 @@ abstract class DashboardEvent extends Equatable {
 }
 
 class GetDashboardEvent extends DashboardEvent {
-  final String attendance;
+  final int day;
 
-  const GetDashboardEvent(this.attendance);
+  const GetDashboardEvent(this.day);
   
   @override
-  List<Object?> get props => [attendance];
+  List<Object?> get props => [day];
 }

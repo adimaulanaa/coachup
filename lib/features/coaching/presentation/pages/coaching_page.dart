@@ -4,6 +4,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_view_coach.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -16,7 +17,6 @@ import 'package:coachup/features/coaching/presentation/pages/detail_coaching_pag
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 
 class CoachingPage extends StatefulWidget {
   const CoachingPage({super.key});
@@ -201,12 +201,6 @@ class _CoachingPageState extends State<CoachingPage> {
   }
 
   Widget listCoaching(Size size, CoachEntity e) {
-    DateTime parsedDate = DateTime.parse(e.date);
-    String formattedDate = DateFormat('d MMMM yyyy').format(parsedDate);
-    int member = 0;
-    if (e.members != '') {
-      member = e.members.split(',').length;
-    }
     return CustomInkWell(
       onTap: () async {
         // Melakukan navigasi ke halaman detail
@@ -220,67 +214,7 @@ class _CoachingPageState extends State<CoachingPage> {
           context.read<CoachingBloc>().add(GetCoachingEvent());
         }
       },
-      child: Container(
-        width: size.width,
-        padding: const EdgeInsets.all(10),
-        margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    e.picCollage,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 15,
-                      fontWeight: bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$formattedDate, ${e.timeStart} - ${e.timeFinish}',
-                    style: blackTextstyle.copyWith(
-                      fontSize: 13,
-                      fontWeight: medium,
-                    ),
-                  ),
-                  Text(
-                    e.topic,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 13,
-                      fontWeight: medium,
-                    ),
-                  ),
-                  Text(
-                    'Member : $member murid',
-                    style: blackTextstyle.copyWith(
-                      fontSize: 13,
-                      fontWeight: medium,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Deskripsi : ${e.description}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 13,
-                      fontWeight: medium,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      child: ListCoaching(dt: e, size: size),
     );
   }
 

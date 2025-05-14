@@ -1,3 +1,4 @@
+import 'package:coachup/features/dashboard/domain/entities/dashboard_entity.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class DashboardState extends Equatable {
@@ -20,11 +21,11 @@ class GetDashboardFailure extends DashboardState {
   List<Object?> get props => [message];
 }
 
-class GetDashboardSuccess extends DashboardState {
-  final String message;
+class GetDashboardLoaded extends DashboardState {
+  final DashboardEntity data;
 
-  const GetDashboardSuccess(this.message);
+  const GetDashboardLoaded(this.data);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [data];
 }

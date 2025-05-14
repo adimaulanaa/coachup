@@ -12,10 +12,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<GetDashboardEvent>((event, emit) async {
       emit(GetDashboardLoading());
 
-      final result = await getDash(event.attendance);
+      final result = await getDash(event.day);
       result.fold(
         (failure) => emit(GetDashboardFailure(failure.message)),
-        (success) => emit(GetDashboardSuccess(success)),
+        (success) => emit(GetDashboardLoaded(success)),
       );
     });
   }

@@ -4,6 +4,7 @@ import 'package:coachup/core/error/failure.dart';
 import 'package:coachup/core/network/network_info.dart';
 import 'package:coachup/features/dashboard/data/datasources/dashboard_local_datasource.dart';
 import 'package:coachup/features/dashboard/data/datasources/dashboard_remote_datasource.dart';
+import 'package:coachup/features/dashboard/domain/entities/dashboard_entity.dart';
 import 'package:coachup/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:dartz/dartz.dart';
 
@@ -19,8 +20,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   );
 
   @override
-  Future<Either<Failure, String>> getDash(
-      String entity) async {
+  Future<Either<Failure, DashboardEntity>> getDash(
+      int entity) async {
     if (await networkInfo.isConnected) {
       try {
         final local = await localDatasource.getDash(entity);
