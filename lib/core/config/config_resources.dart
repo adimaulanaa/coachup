@@ -20,7 +20,7 @@ class StringResources {
   static const String male = "Laki-laki";
   static const String female = "Perempuan";
 
-  //! Core Network
+  //! Student
   static const String student = "Murid Page";
   static const String studentCreated = "Created Murid Page";
   static const String studentEdited = "Edited Murid Page";
@@ -31,7 +31,7 @@ class StringResources {
   static const String sPhone = "Tlpn Murid";
   static const String sActive = "Aktif";
 
-  //! Core Network
+  //! Coaching
   static const String coach = "Coaches Page";
   static const String coachCreated = "Created Coaches Page";
   static const String coachEdited = "Edited Coaches Page";
@@ -45,5 +45,13 @@ class StringResources {
   static const String cDesc = "Deskripsi Pelatihan";
   static const String cPicName = "Nama Penanggung Jawab Sekolah";
   static const String cPicCollage = "Nama Sekolah Pelatihan";
+
+  //! Profile
+  static const String profile = "Profile Page";
+  static const String pName = "Nama";
+  static const String pTitle = "Title";
+  static const String pTlpn = "Tlpn";
+  static const String pHeader = "Title";
+  static const String pSubHeader = "Subtitle";
 
 }

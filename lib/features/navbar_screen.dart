@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/features/coaching/presentation/pages/coaching_page.dart';
 import 'package:coachup/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:coachup/features/profile/presentation/pages/profile_page.dart';
 import 'package:coachup/features/students/presentation/pages/students_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -21,7 +22,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
     DashboardPage(),
     CoachingPage(),
     StudentsPage(),
-    Container(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

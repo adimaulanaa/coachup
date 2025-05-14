@@ -2,6 +2,7 @@ import 'package:coachup/features/coaching/data/models/coaching_model.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/dashboard/domain/entities/dashboard_entity.dart';
 import 'package:coachup/features/services/database_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class DashboardLocalDataSource {
   Future<DashboardEntity> getDash(int day);
@@ -13,6 +14,7 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   @override
   Future<DashboardEntity> getDash(int day) async {
     final database = await db.database;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<Map<String, dynamic>> maps = await database.query('coaches');
     List<CoachEntity> allCoaches =
         maps.map((e) => CoachModel.fromMap(e).toEntity()).toList();
@@ -45,7 +47,12 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
       }
     }
 
+    String name = prefs.getString('name') ?? '';
+    String title = prefs.getString('title') ?? '';
+
     DashboardEntity model = DashboardEntity(
+      name: name,
+      title: title,
       coach: coaches.length,
       collage: coaches.length,
       student: member,

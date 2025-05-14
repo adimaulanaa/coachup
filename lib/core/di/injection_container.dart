@@ -17,6 +17,13 @@ import 'package:coachup/features/dashboard/data/repositories/dashboard_repositor
 import 'package:coachup/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:coachup/features/dashboard/domain/usecases/create_attendance_usecase.dart';
 import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:coachup/features/profile/data/datasources/profile_local_datasource.dart';
+import 'package:coachup/features/profile/data/datasources/profile_remote_datasource.dart';
+import 'package:coachup/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:coachup/features/profile/domain/repositories/profile_repository.dart';
+import 'package:coachup/features/profile/domain/usecases/create_attendance_usecase.dart';
+import 'package:coachup/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:coachup/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:coachup/features/students/data/datasources/students_local_datasource.dart';
 import 'package:coachup/features/students/data/datasources/students_remote_datasource.dart';
 import 'package:coachup/features/students/data/repositories/students_repository_impl.dart';
@@ -108,5 +115,26 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<StudentsLocalDataSource>(
     () => StudentsLocalDataSourceImpl(),
+  );
+
+  //! ✅ Features - Profile
+  sl.registerFactory(() => ProfileBloc(
+        sl<GetProfileUseCase>(),
+        sl<UpdateProfileUseCase>(),
+      ));
+  sl.registerLazySingleton(() => GetProfileUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
+      sl<ProfileRemoteDataSource>(),
+      sl<ProfileLocalDataSource>(),
+      sl<NetworkInfo>(),
+    ),
+  );
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+    () => ProfileRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<ProfileLocalDataSource>(
+    () => ProfileLocalDataSourceImpl(),
   );
 }
