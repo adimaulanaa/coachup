@@ -5,3 +5,7 @@ Aplikasi ini di buat untuk membantu pelathin mengatur pelatihan dan mengelola pe
 ## Concept App
 
 <img src="coachup.png" width="80%" alt="Coachup image">
+
+## Build APK
+- fvm flutter build apk --debug
+- fvm flutter build apk --release
