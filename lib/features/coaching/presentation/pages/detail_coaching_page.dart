@@ -110,10 +110,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
         actions: [
           IconButton(
             onPressed: () async {
-              final saved = await savePdfToDownload(context, detail);
-              if (saved != null) {
-                // print('File saved at $saved');
-              }
+              await savePdfToDownload(context, detail);
             },
             icon: const Icon(
               Icons.download,

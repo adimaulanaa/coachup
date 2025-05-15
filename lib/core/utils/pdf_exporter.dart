@@ -5,6 +5,7 @@ import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -88,7 +89,7 @@ Future<Uint8List> generateSamplePdf(DetailCoachingEntity detail) async {
     fontSize: 10,
     fontWeight: pw.FontWeight.bold,
   );
-
+  final tgl = formatTanggalManual(detail.date.toString());
   pdf.addPage(
     pw.Page(
       margin: const pw.EdgeInsets.all(32),
@@ -116,7 +117,7 @@ Future<Uint8List> generateSamplePdf(DetailCoachingEntity detail) async {
               ),
             ),
 
-            pw.Text("Tanggal: ${detail.date ?? '-'}", style: normalStyle),
+            pw.Text("Tanggal: $tgl", style: normalStyle),
             pw.Text(
                 "Jam: ${detail.timeStart ?? '-'} - ${detail.timeFinish ?? '-'}",
                 style: normalStyle),
@@ -167,11 +168,12 @@ Future<Uint8List> generateSamplePdf(DetailCoachingEntity detail) async {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text("Gender", style: tableHeaderStyle),
+                            child: pw.Text("Jenis Kelamin",
+                                style: tableHeaderStyle),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text("Kampus", style: tableHeaderStyle),
+                            child: pw.Text("Sekolah", style: tableHeaderStyle),
                           ),
                         ],
                       ),
@@ -240,19 +242,38 @@ Future<Uint8List> generateSamplePdf(DetailCoachingEntity detail) async {
 }
 
 /// Simpan PDF ke folder Download dengan dialog simpan
-Future<String?> savePdfToDownload(
+Future<void> savePdfToDownload(
   BuildContext context,
   DetailCoachingEntity detail,
 ) async {
   final hasPermission = await requestStoragePermission(context: context);
-  if (!hasPermission) return null;
+  if (!hasPermission) return;
 
   final pdfData = await generateSamplePdf(detail);
 
+  final downloadsDir = await getExternalStorageDirectory();
+  if (downloadsDir == null) {
+    // ignore: use_build_context_synchronously
+    context.showErrorSnackBar('Download directory not found');
+    return;
+  }
+
+  final fileName = await generateUniqueFileName(
+    directoryPath: downloadsDir.path,
+    schoolName: detail.picCollage ?? "Laporan",
+    date: DateTime.parse(detail.date ?? DateTime.now().toString()),
+  );
+
+  final fullPath = "${downloadsDir.path}/$fileName";
+
+  // Simpan manual ke file sebelum dialog
+  final file = File(fullPath);
+  await file.writeAsBytes(pdfData);
+
   final params = SaveFileDialogParams(
-    data: pdfData,
-    fileName: "sample_pdf_${DateTime.now().millisecondsSinceEpoch}.pdf",
-    mimeTypesFilter: ['application/pdf'], // ini yang benar
+    sourceFilePath: fullPath,
+    fileName: fileName,
+    mimeTypesFilter: ['application/pdf'],
   );
 
   final savedPath = await FlutterFileDialog.saveFile(params: params);
@@ -271,6 +292,59 @@ Future<String?> savePdfToDownload(
       onNavigate: () {},
     );
   }
+  // ignore: avoid_print
+  print(' saved at: $savedPath');
+}
 
-  return savedPath;
+String formatTanggalManual(String tanggal) {
+  final date = DateTime.parse(tanggal);
+
+  const hari = [
+    'Senin',
+    'Selasa',
+    'Rabu',
+    'Kamis',
+    'Jumat',
+    'Sabtu',
+    'Minggu',
+  ];
+
+  const bulan = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
+
+  final namaHari = hari[date.weekday - 1];
+  final namaBulan = bulan[date.month - 1];
+
+  return "$namaHari, ${date.day} $namaBulan ${date.year}";
+}
+
+Future<String> generateUniqueFileName({
+  required String directoryPath,
+  required String schoolName,
+  required DateTime date,
+}) async {
+  final formattedDate =
+      "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  final baseName = "$schoolName-$formattedDate".replaceAll(' ', '_');
+  String fileName = "$baseName.pdf";
+  int counter = 1;
+
+  while (await File("$directoryPath/$fileName").exists()) {
+    fileName = "$baseName($counter).pdf";
+    counter++;
+  }
+
+  return fileName;
 }
