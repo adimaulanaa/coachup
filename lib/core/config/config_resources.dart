@@ -53,5 +53,7 @@ class StringResources {
   static const String pTlpn = "Tlpn";
   static const String pHeader = "Title";
   static const String pSubHeader = "Subtitle";
+  static const String pFPic = "Text PIC";
+  static const String pFCoach = "Text Pelatih";
 
 }

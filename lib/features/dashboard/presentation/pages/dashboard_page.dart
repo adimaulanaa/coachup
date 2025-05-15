@@ -86,7 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 SizedBox(
                   width: size.width * 0.6,
                   child: Text(
-                    dash.name ?? 'Your Name',
+                    dash.name == '' ? 'Your Name' : dash.name.toString(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: blackTextstyle.copyWith(
@@ -98,7 +98,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 SizedBox(
                   width: size.width * 0.6,
                   child: Text(
-                    dash.title ?? 'Your Title',
+                    dash.title == '' ? 'Your Title' : dash.title.toString(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: transTextstyle.copyWith(

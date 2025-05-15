@@ -5,6 +5,8 @@ class ProfileEntity {
   final String? tlpn;
   final String? header;
   final String? subHeader;
+  final String? footerPic;
+  final String? footerCoach;
 
   ProfileEntity({
     this.name,
@@ -12,6 +14,8 @@ class ProfileEntity {
     this.tlpn,
     this.header,
     this.subHeader,
+    this.footerPic,
+    this.footerCoach,
   });
 }
 

@@ -26,6 +26,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController tlpnCtr = TextEditingController();
   final TextEditingController headerCtr = TextEditingController();
   final TextEditingController subHeaderCtr = TextEditingController();
+  final TextEditingController footerPicCtr = TextEditingController();
+  final TextEditingController footerCoachCtr = TextEditingController();
   ProfileEntity profile = ProfileEntity();
   @override
   void initState() {
@@ -173,7 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 isExport ? Icons.save : Icons.edit,
               ), // Ganti ikon berdasarkan mode
               onPressed: () {
-                saveProfile();
+                saveExport();
               },
             ),
           ],
@@ -181,13 +183,24 @@ class _ProfilePageState extends State<ProfilePage> {
         CustomTextField(
           controller: headerCtr,
           label: StringResources.pHeader,
-          enabled: isProfile,
+          enabled: isExport,
         ),
         const SizedBox(height: 10),
         CustomTextField(
           controller: subHeaderCtr,
           label: StringResources.pSubHeader,
-          enabled: isProfile,
+          enabled: isExport,
+        ),
+        CustomTextField(
+          controller: footerPicCtr,
+          label: StringResources.pFPic,
+          enabled: isExport,
+        ),
+        const SizedBox(height: 10),
+        CustomTextField(
+          controller: footerCoachCtr,
+          label: StringResources.pFCoach,
+          enabled: isExport,
         ),
       ],
     );
@@ -199,6 +212,8 @@ class _ProfilePageState extends State<ProfilePage> {
     tlpnCtr.text = profile.tlpn ?? '';
     headerCtr.text = profile.header ?? '';
     subHeaderCtr.text = profile.subHeader ?? '';
+    footerPicCtr.text = profile.footerPic ?? '';
+    footerCoachCtr.text = profile.footerCoach ?? '';
     setState(() {});
   }
 
@@ -227,6 +242,8 @@ class _ProfilePageState extends State<ProfilePage> {
       tlpn: tlpnCtr.text,
       header: headerCtr.text,
       subHeader: subHeaderCtr.text,
+      footerPic: footerPicCtr.text,
+      footerCoach: footerCoachCtr.text,
     );
     return model;
   }

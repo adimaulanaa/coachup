@@ -5,6 +5,7 @@ import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
+import 'package:coachup/core/utils/pdf_exporter.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
@@ -45,6 +46,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
   @override
   void initState() {
     super.initState();
+    // requestStoragePermission();
     context.read<CoachingBloc>().add(DetailCoachingEvent(widget.coaching.id));
   }
 
@@ -106,6 +108,17 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: () async {
+              final saved = await savePdfToDownload(context, detail);
+              if (saved != null) {
+                // print('File saved at $saved');
+              }
+            },
+            icon: const Icon(
+              Icons.download,
+            ),
+          ),
           IconButton(
             onPressed: () {
               String id = widget.coaching.id;
@@ -330,7 +343,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
   void saveChanges() {
     String resultMembers = resultStudent.map((e) => e.id).join(', ');
     final coaching = CoachEntity(
-      id: idCtr.text, 
+      id: idCtr.text,
       name: nameCtr.text,
       topic: topicCtr.text,
       learning: materiCtr.text,

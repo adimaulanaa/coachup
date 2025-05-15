@@ -19,12 +19,16 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
     String tlpn = prefs.getString('tlpn') ?? '';
     String header = prefs.getString('header') ?? '';
     String subHeader = prefs.getString('subHeader') ?? '';
+    String footerPic = prefs.getString('footerPic') ?? '';
+    String footerCoach = prefs.getString('footerCoach') ?? '';
     ProfileEntity model = ProfileEntity(
       name: name,
       title: title,
       tlpn: tlpn,
       header: header,
       subHeader: subHeader,
+      footerPic: footerPic,
+      footerCoach: footerCoach,
     );
     return model;
   }
@@ -37,6 +41,8 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
     await prefs.setString('tlpn', entity.tlpn ?? '');
     await prefs.setString('header', entity.header ?? '');
     await prefs.setString('subHeader', entity.subHeader ?? '');
+    await prefs.setString('footerPic', entity.footerPic ?? '');
+    await prefs.setString('footerCoach', entity.footerCoach ?? '');
     return 'Berhasil ubah profile';
   }
 }
