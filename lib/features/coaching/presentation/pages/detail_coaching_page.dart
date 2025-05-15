@@ -107,40 +107,6 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
             fontWeight: medium,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await savePdfToDownload(context, detail);
-            },
-            icon: const Icon(
-              Icons.download,
-            ),
-          ),
-          IconButton(
-            onPressed: () {
-              String id = widget.coaching.id;
-              context.read<CoachingBloc>().add(DeleteCoachingEvent(id));
-            },
-            icon: const Icon(
-              Icons.delete,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Icon(
-                isEdit ? Icons.save : Icons.edit,
-              ), // Ganti ikon berdasarkan mode
-              onPressed: () {
-                if (isEdit) {
-                  saveChanges(); // Simpan perubahan jika dalam mode edit
-                } else {
-                  toggleEdit(); // Aktifkan mode edit
-                }
-              },
-            ),
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -148,6 +114,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              selectedType(),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: nameCtr,
@@ -289,6 +256,74 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
               ),
               const SizedBox(height: 16),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget selectedType() {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomInkWell(
+            onTap: () async {
+              await savePdfToDownload(context, detail);
+            },
+            child: viewSelectedType('Download PDF', 1),
+          ),
+        ),
+        Expanded(
+          child: CustomInkWell(
+            onTap: () {
+              String id = widget.coaching.id;
+              context.read<CoachingBloc>().add(DeleteCoachingEvent(id));
+            },
+            child: viewSelectedType('Deleted', 0),
+          ),
+        ),
+        Expanded(
+          child: CustomInkWell(
+            onTap: () {
+              if (isEdit) {
+                saveChanges(); // Simpan perubahan jika dalam mode edit
+              } else {
+                toggleEdit(); // Aktifkan mode edit
+              }
+            },
+            child: viewSelectedType(isEdit ? 'Saved' : 'Edited', 2),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget viewSelectedType(String text, int type) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: AppColors.primary,
+          width: 2.5,
+        ),
+        borderRadius: type == 1
+            ? BorderRadius.only(
+                topLeft: Radius.circular(11),
+                bottomLeft: Radius.circular(11),
+              )
+            : type == 2
+                ? BorderRadius.only(
+                    topRight: Radius.circular(11),
+                    bottomRight: Radius.circular(11),
+                  )
+                : null,
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: blackTextstyle.copyWith(
+            fontSize: 12,
+            fontWeight: medium,
           ),
         ),
       ),

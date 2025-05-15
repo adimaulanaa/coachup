@@ -136,8 +136,6 @@ Future<Uint8List> generateSamplePdf(DetailCoachingEntity detail) async {
             pw.SizedBox(height: 16),
 
             // Anggota
-            pw.Text("Peserta:", style: titleStyle),
-            pw.SizedBox(height: 8),
             if (detail.members.isNotEmpty)
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
