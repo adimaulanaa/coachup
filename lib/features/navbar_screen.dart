@@ -3,6 +3,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/features/coaching/presentation/pages/coaching_page.dart';
 import 'package:coachup/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:coachup/features/privates/presentation/pages/privates_page.dart';
 import 'package:coachup/features/profile/presentation/pages/profile_page.dart';
 import 'package:coachup/features/students/presentation/pages/students_page.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
 
   final List<Widget> _pages = [
     DashboardPage(),
+    PrivatesPage(),
     CoachingPage(),
     StudentsPage(),
     ProfilePage(),
@@ -47,8 +49,9 @@ class _NavbarScreenState extends State<NavbarScreen> {
             children: [
               _navItem(0, MediaRes.dashboard, 25),
               _navItem(1, MediaRes.employee, 25),
-              _navItem(2, MediaRes.report, 25),
-              _navItem(3, MediaRes.profile, 25),
+              _navItem(2, MediaRes.employee, 25),
+              _navItem(3, MediaRes.report, 25),
+              _navItem(4, MediaRes.profile, 25),
             ],
           ),
         ),

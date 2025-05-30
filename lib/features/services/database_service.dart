@@ -53,6 +53,9 @@ class DatabaseService {
     await db.execute(
       'CREATE TABLE coaches(_id TEXT PRIMARY KEY, name TEXT, topic TEXT, learning TEXT, date TEXT, time_start TEXT, time_finish TEXT, pic_name TEXT, pic_collage TEXT, members TEXT, activity TEXT, description TEXT, created_on TEXT, updated_on TEXT)',
     );
+    await db.execute(
+      'CREATE TABLE privates(_id TEXT PRIMARY KEY, name TEXT, description TEXT, date TEXT, student TEXT, student_id TEXT, created_on TEXT, updated_on TEXT)',
+    );
   }
 
 }

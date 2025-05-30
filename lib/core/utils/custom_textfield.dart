@@ -8,6 +8,7 @@ class CustomTextField extends StatefulWidget {
   final String label;
   final bool enabled;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final bool isDescription;
   final int lines;
 
@@ -17,6 +18,7 @@ class CustomTextField extends StatefulWidget {
     required this.label,
     this.enabled = true,
     this.onChanged,
+    this.onSubmitted,
     this.isDescription = false,
     this.lines = 1,
   });
@@ -80,6 +82,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               focusNode: _focusNode,
               enabled: widget.enabled,
               onChanged: widget.onChanged,
+              onFieldSubmitted: widget.onSubmitted,
               style: blackTextstyle.copyWith(
                 fontSize: 15,
                 fontWeight: medium,

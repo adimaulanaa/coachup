@@ -56,4 +56,11 @@ class StringResources {
   static const String pFPic = "Text PIC";
   static const String pFCoach = "Text Pelatih";
 
+  //! Coaching
+  static const String privates = "Private Page";
+  static const String prCreated = "Created Private Page";
+  static const String prName = "Nama Kegiatan";
+  static const String prDesc = "Deskripsi Pelatihan";
+  static const String prStudent = "Nama Murid";
+
 }

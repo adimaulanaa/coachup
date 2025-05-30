@@ -4,6 +4,7 @@ import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:coachup/features/onboarding/onboarding.dart';
+import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
 import 'package:coachup/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:coachup/features/students/presentation/bloc/students_bloc.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ void main() async {
         BlocProvider(create: (_) => di.sl<StudentsBloc>()),
         BlocProvider(create: (_) => di.sl<CoachingBloc>()),
         BlocProvider(create: (_) => di.sl<ProfileBloc>()),
+        BlocProvider(create: (_) => di.sl<PrivatesBloc>()),
         // Tambahkan Bloc lain di sini kalau perlu
       ],
       child: const MyApp(),

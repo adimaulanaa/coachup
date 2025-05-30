@@ -17,6 +17,13 @@ import 'package:coachup/features/dashboard/data/repositories/dashboard_repositor
 import 'package:coachup/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:coachup/features/dashboard/domain/usecases/create_attendance_usecase.dart';
 import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:coachup/features/privates/data/datasources/privates_local_datasource.dart';
+import 'package:coachup/features/privates/data/datasources/privates_remote_datasource.dart';
+import 'package:coachup/features/privates/data/repositories/privates_repository_impl.dart';
+import 'package:coachup/features/privates/domain/repositories/privates_repository.dart';
+import 'package:coachup/features/privates/domain/usecases/created_privates_usecase.dart';
+import 'package:coachup/features/privates/domain/usecases/get_privates_usecase.dart';
+import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
 import 'package:coachup/features/profile/data/datasources/profile_local_datasource.dart';
 import 'package:coachup/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:coachup/features/profile/data/repositories/profile_repository_impl.dart';
@@ -136,5 +143,26 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ProfileLocalDataSource>(
     () => ProfileLocalDataSourceImpl(),
+  );
+
+  //! ✅ Features - Privates
+  sl.registerFactory(() => PrivatesBloc(
+        sl<GetPrivatesUseCase>(),
+        sl<CreatedPrivatesUseCase>(),
+      ));
+  sl.registerLazySingleton(() => GetPrivatesUseCase(sl()));
+  sl.registerLazySingleton(() => CreatedPrivatesUseCase(sl()));
+  sl.registerLazySingleton<PrivatesRepository>(
+    () => PrivatesRepositoryImpl(
+      sl<PrivatesRemoteDataSource>(),
+      sl<PrivatesLocalDataSource>(),
+      sl<NetworkInfo>(),
+    ),
+  );
+  sl.registerLazySingleton<PrivatesRemoteDataSource>(
+    () => PrivatesRemoteDataSourceImpl(sl()),
+  );
+  sl.registerLazySingleton<PrivatesLocalDataSource>(
+    () => PrivatesLocalDataSourceImpl(),
   );
 }
