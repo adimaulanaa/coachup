@@ -3,12 +3,12 @@ import 'package:coachup/features/privates/data/models/privates_model.dart';
 import 'package:coachup/features/privates/domain/repositories/privates_repository.dart';
 import 'package:dartz/dartz.dart';
 
-class GetPrivatesUseCase {
+class ListPrivatesUseCase {
   final PrivatesRepository repository;
 
-  GetPrivatesUseCase(this.repository);
+  ListPrivatesUseCase(this.repository);
 
-  Future<Either<Failure, PrivatesModel>> call(String entity) {
-    return repository.get(entity);
+  Future<Either<Failure, List<PrivatesModel>>> call(String id) {
+    return repository.list(id);
   }
 }

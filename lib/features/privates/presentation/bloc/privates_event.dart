@@ -6,19 +6,46 @@ abstract class PrivatesEvent extends Equatable {
   const PrivatesEvent();
 }
 
-class GetPrivatesEvent extends PrivatesEvent {
+class ListPrivatesEvent extends PrivatesEvent {
   final String day;
 
-  const GetPrivatesEvent(this.day);
+  const ListPrivatesEvent(this.day);
   
   @override
   List<Object?> get props => [day];
+}
+
+class GetPrivatesEvent extends PrivatesEvent {
+  final String id;
+
+  const GetPrivatesEvent(this.id);
+  
+  @override
+  List<Object?> get props => [id];
 }
 
 class CreatePrivatesEvent extends PrivatesEvent {
   final PrivatesEntity data;
 
   const CreatePrivatesEvent(this.data);
+  
+  @override
+  List<Object?> get props => [data];
+}
+
+class DeletePrivatesEvent extends PrivatesEvent {
+  final String id;
+
+  const DeletePrivatesEvent(this.id);
+  
+  @override
+  List<Object?> get props => [id];
+}
+
+class UpdatePrivatesEvent extends PrivatesEvent {
+  final PrivatesEntity data;
+
+  const UpdatePrivatesEvent(this.data);
   
   @override
   List<Object?> get props => [data];

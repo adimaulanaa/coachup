@@ -12,7 +12,13 @@ class PrivatesInitial extends PrivatesState {}
 
 class GetPrivatesLoading extends PrivatesState {}
 
+class ListPrivatesLoading extends PrivatesState {}
+
 class CreatedPrivatesLoading extends PrivatesState {}
+
+class DeletePrivatesLoading extends PrivatesState {}
+
+class UpdatePrivatesLoading extends PrivatesState {}
 
 class GetPrivatesFailure extends PrivatesState {
   final String message;
@@ -24,9 +30,27 @@ class GetPrivatesFailure extends PrivatesState {
 }
 
 class GetPrivatesLoaded extends PrivatesState {
-  final List<PrivatesModel> data;
+  final PrivatesModel data;
 
   const GetPrivatesLoaded(this.data);
+
+  @override
+  List<Object?> get props => [data];
+}
+
+class ListPrivatesFailure extends PrivatesState {
+  final String message;
+
+  const ListPrivatesFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ListPrivatesLoaded extends PrivatesState {
+  final List<PrivatesModel> data;
+
+  const ListPrivatesLoaded(this.data);
 
   @override
   List<Object?> get props => [data];
@@ -45,6 +69,42 @@ class CreatedPrivatesFailure extends PrivatesState {
   final String message;
 
   const CreatedPrivatesFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class DeletePrivatesSuccess extends PrivatesState {
+  final String message;
+
+  const DeletePrivatesSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class DeletePrivatesFailure extends PrivatesState {
+  final String message;
+
+  const DeletePrivatesFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class UpdatePrivatesSuccess extends PrivatesState {
+  final String message;
+
+  const UpdatePrivatesSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class UpdatePrivatesFailure extends PrivatesState {
+  final String message;
+
+  const UpdatePrivatesFailure(this.message);
 
   @override
   List<Object?> get props => [message];

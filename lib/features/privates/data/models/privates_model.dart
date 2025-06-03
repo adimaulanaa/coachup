@@ -60,7 +60,7 @@ class PrivatesModel extends PrivatesEntity {
         'name': name,
         'description': description,
         'date': date,
-        'student': studentId,
+        'student': student,
         'student_id': studentId,
         'created_on': createdOn?.toIso8601String(),
         'updated_on': updatedOn?.toIso8601String(),

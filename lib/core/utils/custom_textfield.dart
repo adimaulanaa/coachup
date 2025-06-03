@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
+  final FocusNode? focus;
   final String label;
   final bool enabled;
   final ValueChanged<String>? onChanged;
@@ -15,6 +16,7 @@ class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
     required this.controller,
+    this.focus,
     required this.label,
     this.enabled = true,
     this.onChanged,
@@ -302,6 +304,125 @@ class _CustomTimeFieldState extends State<CustomTimeField> {
                     border: InputBorder.none,
                   ),
                 ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomTextStudentField extends StatefulWidget {
+  final TextEditingController controller;
+  final FocusNode? focus;
+  final String label;
+  final bool enabled;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final bool isDescription;
+  final int lines;
+
+  const CustomTextStudentField({
+    super.key,
+    required this.controller,
+    this.focus,
+    required this.label,
+    this.enabled = true,
+    this.onChanged,
+    this.onSubmitted,
+    this.isDescription = false,
+    this.lines = 1,
+  });
+
+  @override
+  State<CustomTextStudentField> createState() => _CustomTextStudentFieldState();
+}
+
+class _CustomTextStudentFieldState extends State<CustomTextStudentField> {
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Gunakan FocusNode dari luar jika ada, jika tidak buat baru
+    _focusNode = widget.focus ?? FocusNode();
+
+    _focusNode.addListener(() {
+      if (mounted) {
+        setState(() {
+          _isFocused = _focusNode.hasFocus;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Hanya dispose jika kita yang buat sendiri
+    if (widget.focus == null) {
+      _focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Color outerBorderColor =
+        _isFocused ? AppColors.primary.withOpacity(0.4) : Colors.transparent;
+    final Color innerBorderColor =
+        _isFocused ? AppColors.primary : Colors.grey;
+    final Color labelColor = _isFocused ? Colors.black : Colors.grey;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: outerBorderColor,
+          width: 3,
+        ),
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: innerBorderColor,
+              width: 2.5,
+            ),
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: TextFormField(
+              controller: widget.controller,
+              focusNode: _focusNode,
+              enabled: widget.enabled,
+              onChanged: widget.onChanged,
+              onFieldSubmitted: widget.onSubmitted,
+              style: blackTextstyle.copyWith(
+                fontSize: 15,
+                fontWeight: medium,
+              ),
+              maxLines: widget.isDescription ? widget.lines : 1,
+              minLines: widget.isDescription ? widget.lines : 1,
+              keyboardType: widget.isDescription
+                  ? TextInputType.multiline
+                  : TextInputType.text,
+              textInputAction: widget.isDescription
+                  ? TextInputAction.newline
+                  : TextInputAction.done,
+              decoration: InputDecoration(
+                labelText: widget.label,
+                labelStyle: transTextstyle.copyWith(
+                  fontSize: 15,
+                  fontWeight: medium,
+                  color: labelColor,
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
               ),
             ),
           ),

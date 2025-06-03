@@ -1,6 +1,7 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
+import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_botton.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
@@ -26,6 +27,7 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
   final TextEditingController inputCtr = TextEditingController();
   final TextEditingController descriptionCtr = TextEditingController();
   final TextEditingController dateCtr = TextEditingController();
+  final inputFocusNode = FocusNode();
   bool isMurid = false;
   bool isSubmited = false;
   List<String> listMurid = [];
@@ -61,9 +63,10 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
           } else if (state is CreatedPrivatesSuccess) {
             LoadingDialog.hide(context);
             context.showSuccesSnackBar(
-            state.message,
-            onNavigate: () {}, // bottom close
-          );
+              state.message,
+              onNavigate: () {}, // bottom close
+            );
+            AppNavigator.pop(context);
           } else if (state is CreatedPrivatesFailure) {
             LoadingDialog.hide(context);
             context.showSuccesSnackBar(
@@ -124,8 +127,9 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
             Row(
               children: [
                 Expanded(
-                  child: CustomTextField(
+                  child: CustomTextStudentField(
                     controller: inputCtr,
+                    focus: inputFocusNode,
                     label: StringResources.prStudent,
                     onChanged: (value) {
                       checkingInput(value);
@@ -228,6 +232,9 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
       isMurid = false;
     }
     inputCtr.clear();
+
+    // Fokus kembali ke input
+    FocusScope.of(context).requestFocus(inputFocusNode);
     setState(() {});
   }
 
@@ -243,7 +250,6 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
       createdOn: DateTime.now(),
       updatedOn: DateTime.now(),
     );
-    print(model);
     _privatesBloc.add(CreatePrivatesEvent(model));
   }
 }

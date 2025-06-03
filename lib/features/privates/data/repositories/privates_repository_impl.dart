@@ -21,7 +21,7 @@ class PrivatesRepositoryImpl implements PrivatesRepository {
   );
 
   @override
-  Future<Either<Failure, List<PrivatesModel>>> get(
+  Future<Either<Failure, List<PrivatesModel>>> list(
       String entity) async {
     if (await networkInfo.isConnected) {
       try {
@@ -50,10 +50,95 @@ class PrivatesRepositoryImpl implements PrivatesRepository {
   }
 
   @override
+  Future<Either<Failure, PrivatesModel>> get(
+      String id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.get(id);
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.toString()));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.toString()));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.toString()));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.toString()));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(
+          NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
+
+  @override
   Future<Either<Failure, String>> created(PrivatesEntity entity) async {
     if (await networkInfo.isConnected) {
       try {
         final local = await localDatasource.create(entity);
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.toString()));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.toString()));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.toString()));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.toString()));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(
+          NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, String>> delete(String id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.delete(id);
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.toString()));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.toString()));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.toString()));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.toString()));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(
+          NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, String>> updated(PrivatesEntity entity) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.update(entity);
         return Right(local);
       } on BadRequestException catch (e) {
         return Left(BadRequestFailure(e.toString()));

@@ -58,6 +58,7 @@ class StringResources {
 
   //! Coaching
   static const String privates = "Private Page";
+  static const String prEdited = "Edited Private Page";
   static const String prCreated = "Created Private Page";
   static const String prName = "Nama Kegiatan";
   static const String prDesc = "Deskripsi Pelatihan";

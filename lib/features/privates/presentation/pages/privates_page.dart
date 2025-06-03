@@ -12,6 +12,7 @@ import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_event.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_state.dart';
 import 'package:coachup/features/privates/presentation/pages/created_privates_page.dart';
+import 'package:coachup/features/privates/presentation/pages/detail_private_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,7 +37,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
     super.initState();
     today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _privatesBloc = context.read<PrivatesBloc>();
-    _privatesBloc.add(GetPrivatesEvent(today));
+    _privatesBloc.add(ListPrivatesEvent(''));
   }
 
   @override
@@ -59,9 +60,9 @@ class _PrivatesPageState extends State<PrivatesPage> {
       ),
       body: BlocListener<PrivatesBloc, PrivatesState>(
         listener: (context, state) {
-          if (state is GetPrivatesLoading) {
+          if (state is ListPrivatesLoading) {
             LoadingDialog.show(context);
-          } else if (state is GetPrivatesFailure) {
+          } else if (state is ListPrivatesFailure) {
             LoadingDialog.hide(context);
             context.showSuccesSnackBar(
               state.message,
@@ -71,7 +72,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
         },
         child: BlocBuilder<PrivatesBloc, PrivatesState>(
           builder: (context, state) {
-            if (state is GetPrivatesLoaded) {
+            if (state is ListPrivatesLoaded) {
               allPrivates = state.data;
               privates = allPrivates;
               LoadingDialog.hide(context);
@@ -193,15 +194,15 @@ class _PrivatesPageState extends State<PrivatesPage> {
     return CustomInkWell(
       onTap: () async {
         // Melakukan navigasi ke halaman detail
-        // await AppNavigator.push(
-        //   DetailCoachingPage(coaching: e),
-        //   transition: TransitionType.fade,
-        // );
-        // if (mounted) {
-        //   initialized = false; // reset biar filter di-refresh
-        //   // Lakukan refresh atau panggil event untuk mengambil data coaching
-        //   context.read<CoachingBloc>().add(GetCoachingEvent());
-        // }
+        await AppNavigator.push(
+          DetailPrivatePage(private: e),
+          transition: TransitionType.fade,
+        );
+        if (mounted) {
+          initialized = false; // reset biar filter di-refresh
+          // Lakukan refresh atau panggil event untuk mengambil data coaching
+          context.read<PrivatesBloc>().add(ListPrivatesEvent(''));
+        }
       },
       child: Container(
         width: size.width,
