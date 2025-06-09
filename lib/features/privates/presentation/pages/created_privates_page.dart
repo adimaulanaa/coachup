@@ -216,6 +216,7 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
     } else {
       isSubmited = false;
     }
+    setState(() {});
   }
 
   void addMurid() {

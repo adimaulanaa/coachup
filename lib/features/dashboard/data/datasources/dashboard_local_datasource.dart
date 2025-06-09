@@ -1,51 +1,36 @@
 import 'package:coachup/features/coaching/data/models/coaching_model.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/dashboard/domain/entities/dashboard_entity.dart';
+import 'package:coachup/features/privates/data/models/privates_model.dart';
+import 'package:coachup/features/privates/domain/entities/privates_entity.dart';
 import 'package:coachup/features/services/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class DashboardLocalDataSource {
-  Future<DashboardEntity> getDash(int day);
+  Future<DashboardEntity> getDash(String day);
 }
 
 class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   final db = DatabaseService();
 
   @override
-  Future<DashboardEntity> getDash(int day) async {
+  Future<DashboardEntity> getDash(String day) async {
     final database = await db.database;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final List<Map<String, dynamic>> maps = await database.query('coaches');
+    final List<Map<String, dynamic>> maps = await database.query(
+      'coaches',
+      where: 'date = ?',
+      whereArgs: [day],
+    );
+    final List<Map<String, dynamic>> priv = await database.query(
+      'privates',
+      where: 'date = ?',
+      whereArgs: [day],
+    );
     List<CoachEntity> allCoaches =
         maps.map((e) => CoachModel.fromMap(e).toEntity()).toList();
-
-    // Filter berdasarkan day
-    final today = DateTime.now();
-    List<CoachEntity> coaches = allCoaches.where((e) {
-      final date = DateTime.tryParse(e.date);
-      if (date == null) return false;
-
-      switch (day) {
-        case 1:
-          return isSameDate(date, today);
-        case 2:
-          return date.isAfter(today.subtract(const Duration(days: 1))) &&
-              date.isBefore(today.add(const Duration(days: 3)));
-        case 3:
-          return date.isAfter(today.subtract(const Duration(days: 1))) &&
-              date.isBefore(today.add(const Duration(days: 7)));
-        default:
-          return true; // tanpa filter
-      }
-    }).toList();
-
-    int member = 0;
-    for (var e in coaches) {
-      if (e.members != '') {
-        int total = e.members.split(',').length;
-        member += total;
-      }
-    }
+    List<PrivatesEntity> allPrivate =
+        priv.map((e) => PrivatesModel.fromMap(e).toEntity()).toList();
 
     String name = prefs.getString('name') ?? '';
     String title = prefs.getString('title') ?? '';
@@ -53,10 +38,8 @@ class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
     DashboardEntity model = DashboardEntity(
       name: name,
       title: title,
-      coach: coaches.length,
-      collage: coaches.length,
-      student: member,
-      coaches: coaches,
+      coach: allCoaches.length,
+      private: allPrivate.length,
     );
 
     return model;

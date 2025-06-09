@@ -21,7 +21,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   @override
   Future<Either<Failure, DashboardEntity>> getDash(
-      int entity) async {
+      String entity) async {
     if (await networkInfo.isConnected) {
       try {
         final local = await localDatasource.getDash(entity);

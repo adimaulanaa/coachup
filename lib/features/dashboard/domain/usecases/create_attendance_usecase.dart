@@ -8,7 +8,7 @@ class GetDashboardUseCase {
 
   GetDashboardUseCase(this.repository);
 
-  Future<Either<Failure, DashboardEntity>> call(int entity) {
+  Future<Either<Failure, DashboardEntity>> call(String entity) {
     return repository.getDash(entity);
   }
 }

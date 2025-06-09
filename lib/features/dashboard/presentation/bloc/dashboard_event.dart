@@ -6,7 +6,7 @@ abstract class DashboardEvent extends Equatable {
 }
 
 class GetDashboardEvent extends DashboardEvent {
-  final int day;
+  final String day;
 
   const GetDashboardEvent(this.day);
   

@@ -15,6 +15,7 @@ import 'package:coachup/features/dashboard/presentation/bloc/dashboard_state.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -25,13 +26,15 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   bool isHeader = false;
-  int today = 1;
+  String today = '';
+  DateTime now = DateTime.now();
   DashboardEntity dash = DashboardEntity();
   List<CoachEntity> allCoaches = [];
   @override
   void initState() {
     super.initState();
     UiModeHelper.enableDefault();
+    today = DateFormat('yyyy-MM-dd').format(now);
     context.read<DashboardBloc>().add(GetDashboardEvent(today));
   }
 
@@ -53,7 +56,6 @@ class _DashboardPageState extends State<DashboardPage> {
         builder: (context, state) {
           if (state is GetDashboardLoaded) {
             dash = state.data;
-            allCoaches = state.data.coaches;
             LoadingDialog.hide();
           }
           return bodyForm();
@@ -128,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: size.height * 0.03),
+            SizedBox(height: size.height * 0.02),
             Container(
               // height: size.height * 0.2,
               width: size.width * 0.9,
@@ -145,62 +147,73 @@ class _DashboardPageState extends State<DashboardPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Your Today',
+                          'Report Today',
                           style: transTextstyle.copyWith(
                             fontSize: 18,
                             fontWeight: bold,
                             color: AppColors.bgBlack,
                           ),
                         ),
-                        CustomInkWell(
-                          onTap: () {
-                            setState(() {
-                              isHeader = !isHeader;
-                            });
-                          },
-                          child: Icon(
-                            isHeader
-                                ? Icons.arrow_drop_up
-                                : Icons.arrow_drop_down,
-                            size: 30,
+                        // CustomInkWell(
+                        //   onTap: () {
+                        //     setState(() {
+                        //       isHeader = !isHeader;
+                        //     });
+                        //   },
+                        //   child: Icon(
+                        //     isHeader
+                        //         ? Icons.arrow_drop_up
+                        //         : Icons.arrow_drop_down,
+                        //     size: 30,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          MediaRes.privates,
+                          width: 20,
+                          // ignore: deprecated_member_use
+                          color: AppColors.primary,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          '${dash.private} Private',
+                          style: blackTextstyle.copyWith(
+                            fontSize: 15,
+                            fontWeight: medium,
                           ),
                         ),
                       ],
                     ),
                   ),
+                  SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: RichText(
-                      text: TextSpan(
-                        style: blackTextstyle.copyWith(
-                          fontSize: 13,
-                          fontWeight: light,
-                        ), // gaya teks default
-                        children: [
-                          const TextSpan(
-                              text: 'Saat ini, kamu tercatat memiliki '),
-                          TextSpan(
-                            text: '${dash.coach} pengajaran',
-                            style: blackTextstyle.copyWith(
-                                fontWeight: FontWeight.bold),
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          MediaRes.coaching,
+                          width: 20,
+                          // ignore: deprecated_member_use
+                          color: AppColors.primary,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          '${dash.coach} Pelatihan',
+                          style: blackTextstyle.copyWith(
+                            fontSize: 15,
+                            fontWeight: medium,
                           ),
-                          const TextSpan(text: ' di '),
-                          TextSpan(
-                            text: '${dash.collage} sekolah',
-                            style: blackTextstyle.copyWith(
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const TextSpan(text: ', dengan total sekitar '),
-                          TextSpan(
-                            text: '${dash.student} murid',
-                            style: blackTextstyle.copyWith(
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const TextSpan(text: '.'),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  )
+                  ),
+                  SizedBox(height: 10),
                 ],
               ),
             ),
