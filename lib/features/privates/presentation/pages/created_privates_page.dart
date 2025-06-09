@@ -196,9 +196,11 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
                     listMurid.remove(e);
                   });
                 },
-                child: const Icon(
-                  Icons.delete,
-                  size: 20,
+                child: SvgPicture.asset(
+                  MediaRes.closeCircle,
+                  // ignore: deprecated_member_use
+                  color: AppColors.bgGreySecond,
+                  width: 20,
                 ),
               ),
             ],

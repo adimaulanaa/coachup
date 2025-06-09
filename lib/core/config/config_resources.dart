@@ -24,9 +24,9 @@ class StringResources {
   static const String female = "Perempuan";
 
   //! Student
-  static const String student = "Murid Page";
-  static const String studentCreated = "Created Murid Page";
-  static const String studentEdited = "Edited Murid Page";
+  static const String student = "Daftar Murid";
+  static const String studentCreated = "Buat Murid Baru";
+  static const String studentEdited = "Edit Murid";
   static const String sName = "Nama Murid";
   static const String sClass = "Kelas Murid";
   static const String sGender = "Jenis Kelamin Murid";
@@ -35,9 +35,9 @@ class StringResources {
   static const String sActive = "Aktif";
 
   //! Coaching
-  static const String coach = "Coaches Page";
-  static const String coachCreated = "Created Coaches Page";
-  static const String coachEdited = "Edited Coaches Page";
+  static const String coach = "Daftar Pelatihan";
+  static const String coachCreated = "Buat Pelatihan Baru";
+  static const String coachEdited = "Edit Pelatihan";
   static const String cName = "Nama Pelatihan";
   static const String cTopic = "Topic Pelatihan";
   static const String cMateri = "Materi Pelatihan";
@@ -60,9 +60,9 @@ class StringResources {
   static const String pFCoach = "Text Pelatih";
 
   //! Coaching
-  static const String privates = "Private Page";
-  static const String prEdited = "Edited Private Page";
-  static const String prCreated = "Created Private Page";
+  static const String privates = "Daftar Private";
+  static const String prEdited = "Edit Private";
+  static const String prCreated = "Buat Private Baru";
   static const String prName = "Nama Kegiatan";
   static const String prDesc = "Deskripsi Pelatihan";
   static const String prStudent = "Nama Murid";

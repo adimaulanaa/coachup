@@ -1,5 +1,6 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_botton.dart';
@@ -15,6 +16,7 @@ import 'package:coachup/features/coaching/presentation/widget/view_add_student.d
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreatedCoachingPage extends StatefulWidget {
   const CreatedCoachingPage({super.key});
@@ -201,9 +203,11 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
                                           (student) => student.id == e.id);
                                     });
                                   },
-                                  child: const Icon(
-                                    Icons.delete,
-                                    size: 20,
+                                  child: SvgPicture.asset(
+                                    MediaRes.closeCircle,
+                                    // ignore: deprecated_member_use
+                                    color: AppColors.bgGreySecond,
+                                    width: 20,
                                   ),
                                 ),
                               ],

@@ -1,5 +1,6 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
@@ -16,6 +17,7 @@ import 'package:coachup/features/coaching/presentation/pages/created_coaching_pa
 import 'package:coachup/features/coaching/presentation/pages/detail_coaching_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CoachingPage extends StatefulWidget {
   const CoachingPage({super.key});
@@ -99,32 +101,28 @@ class _CoachingPageState extends State<CoachingPage> {
               Row(
                 children: [
                   Expanded(
-                  child: CustomSearchField(
-                    controller: searchController,
-                    hintText: 'Cari Nama Sekolah...',
-                    onChanged: (value) {
-                      search(value);
-                    },
-                    onClear: () {
-                      searchController.clear();
-                      search('');
-                    },
+                    child: CustomSearchField(
+                      controller: searchController,
+                      hintText: 'Cari Nama Sekolah...',
+                      onChanged: (value) {
+                        search(value);
+                      },
+                      onClear: () {
+                        searchController.clear();
+                        search('');
+                      },
+                    ),
                   ),
-                ),
                   const SizedBox(width: 5),
                   CustomInkWell(
                     onTap: () {
                       navCreated();
                     },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300], // Placeholder warna
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child:
-                          const Icon(Icons.add, size: 30, color: Colors.grey),
+                    child: SvgPicture.asset(
+                      MediaRes.created,
+                      // ignore: deprecated_member_use
+                      color: AppColors.bgGreySecond,
+                      width: 30,
                     ),
                   ),
                 ],

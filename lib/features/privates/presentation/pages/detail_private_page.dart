@@ -34,6 +34,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
   final TextEditingController dateCtr = TextEditingController();
   final inputFocusNode = FocusNode();
   PrivatesEntity private = PrivatesEntity();
+  String names = '';
   bool isEdit = false;
   bool isMurid = false;
   bool isSubmited = false;
@@ -44,6 +45,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
   void initState() {
     super.initState();
     nameCtr.text = widget.private.name ?? '';
+    names = nameCtr.text;
     _privatesBloc = context.read<PrivatesBloc>();
     _privatesBloc.add(GetPrivatesEvent(widget.private.id.toString()));
   }
@@ -59,7 +61,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
         surfaceTintColor: Colors.transparent,
         centerTitle: true,
         title: Text(
-          isEdit ? StringResources.prEdited : nameCtr.text,
+          names,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: blackTextstyle.copyWith(
@@ -89,6 +91,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
               setDataValue(state.data);
               isInitialized = true;
             }
+            isEdit = false;
             LoadingDialog.hide();
           } else if (state is DeletePrivatesSuccess) {
             LoadingDialog.hide();
@@ -229,9 +232,11 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
                     });
                   }
                 },
-                child: const Icon(
-                  Icons.delete,
-                  size: 20,
+                child: SvgPicture.asset(
+                  MediaRes.closeCircle,
+                  // ignore: deprecated_member_use
+                  color: AppColors.bgGreySecond,
+                  width: 20,
                 ),
               ),
             ],
@@ -267,7 +272,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
               text: 'Deleted',
               type: 0,
               iconPath: MediaRes.deleted,
-              widthIc: 16,
+              widthIc: 18,
             ),
           ),
         ),
@@ -284,7 +289,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
               text: isEdit ? StringResources.saved : StringResources.edited,
               type: 2,
               iconPath: isEdit ? MediaRes.saved : MediaRes.edited,
-              widthIc: 16,
+              widthIc: 18,
             ),
           ),
         ),
@@ -295,6 +300,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
   void toggleEdit() {
     setState(() {
       isEdit = !isEdit; // Toggle antara edit dan view mode
+      names = isEdit ? StringResources.prEdited : nameCtr.text;
     });
   }
 
@@ -344,6 +350,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
   }
 
   void setDataValue(PrivatesModel data) {
+    names = data.name ?? '';
     nameCtr.text = data.name ?? '';
     dateCtr.text = data.date ?? '';
     descriptionCtr.text = data.description ?? '';
@@ -354,5 +361,6 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
             .toList() ??
         [];
     isMurid = listMurid.isNotEmpty;
+    setState(() {});
   }
 }

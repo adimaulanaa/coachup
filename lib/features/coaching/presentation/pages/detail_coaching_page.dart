@@ -1,8 +1,10 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_selected_type.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/pdf_exporter.dart';
@@ -16,6 +18,7 @@ import 'package:coachup/features/coaching/presentation/widget/view_add_student.d
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class DetailCoachingPage extends StatefulWidget {
   final CoachEntity coaching;
@@ -27,6 +30,7 @@ class DetailCoachingPage extends StatefulWidget {
 
 class _DetailCoachingPageState extends State<DetailCoachingPage> {
   bool isEdit = false;
+  bool isInitialized = false;
   final TextEditingController idCtr = TextEditingController();
   final TextEditingController nameCtr = TextEditingController();
   final TextEditingController topicCtr = TextEditingController();
@@ -63,6 +67,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
         } else if (state is UpdateCoachingSuccess) {
           LoadingDialog.hide(); // Menyembunyikan loading dialog
           isEdit = false;
+          isInitialized = false;
           context.showSuccesSnackBar(state.message, onNavigate: () {});
         } else if (state is DeleteCoachingSuccess) {
           LoadingDialog.hide(); // Menyembunyikan loading dialog
@@ -80,9 +85,12 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
       child: BlocBuilder<CoachingBloc, CoachingState>(
         builder: (context, state) {
           if (state is DetailCoachingLoaded) {
-            detail = state.detail;
+            if (!isInitialized) {
+              detail = state.detail;
+              setData();
+              isInitialized = true;
+            }
             LoadingDialog.hide();
-            setData();
           }
           return bodyForm();
         },
@@ -99,7 +107,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          isEdit ? StringResources.studentEdited : widget.coaching.name,
+          isEdit ? StringResources.coachEdited : picCollageCtr.text,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: blackTextstyle.copyWith(
@@ -206,9 +214,11 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
                                       });
                                     }
                                   },
-                                  child: const Icon(
-                                    Icons.delete,
-                                    size: 20,
+                                  child: SvgPicture.asset(
+                                    MediaRes.closeCircle,
+                                    // ignore: deprecated_member_use
+                                    color: AppColors.bgGreySecond,
+                                    width: 20,
                                   ),
                                 ),
                               ],
@@ -270,7 +280,12 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
             onTap: () async {
               await savePdfToDownload(context, detail);
             },
-            child: viewSelectedType('Download PDF', 1),
+            child: SelectedTypeView(
+              text: 'PDF',
+              type: 1,
+              iconPath: MediaRes.print,
+              widthIc: 16,
+            ),
           ),
         ),
         Expanded(
@@ -279,7 +294,12 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
               String id = widget.coaching.id;
               context.read<CoachingBloc>().add(DeleteCoachingEvent(id));
             },
-            child: viewSelectedType('Deleted', 0),
+            child: SelectedTypeView(
+              text: 'Deleted',
+              type: 0,
+              iconPath: MediaRes.deleted,
+              widthIc: 18,
+            ),
           ),
         ),
         Expanded(
@@ -291,7 +311,12 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
                 toggleEdit(); // Aktifkan mode edit
               }
             },
-            child: viewSelectedType(isEdit ? 'Saved' : 'Edited', 2),
+            child: SelectedTypeView(
+              text: isEdit ? StringResources.saved : StringResources.edited,
+              type: 2,
+              iconPath: isEdit ? MediaRes.saved : MediaRes.edited,
+              widthIc: 18,
+            ),
           ),
         ),
       ],
