@@ -1,5 +1,5 @@
 import 'package:coachup/core/media/media_colors.dart';
-import 'package:coachup/core/media/media_res.dart';
+import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/ui_mode_helper.dart';
 import 'package:coachup/features/navbar_screen.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +31,18 @@ class _OnboardingState extends State<Onboarding> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       body: Center(
-        child: Image.asset(
-          MediaRes.omboarding, // Ganti dengan path gambar Anda
-          width: MediaQuery.of(context).size.width * 0.5,
-          height: MediaQuery.of(context).size.height * 0.21,
-          fit: BoxFit.cover,
+        // child: Image.asset(
+        //   MediaRes.omboarding, // Ganti dengan path gambar Anda
+        //   width: MediaQuery.of(context).size.width * 0.5,
+        //   height: MediaQuery.of(context).size.height * 0.21,
+        //   fit: BoxFit.cover,
+        // ),
+        child: Text(
+          'Coach Up',
+          style: blackTextstyle.copyWith(
+            fontSize: 35,
+            fontWeight: bold,
+          ),
         ),
       ),
     );
