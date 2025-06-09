@@ -48,9 +48,9 @@ class _CoachingPageState extends State<CoachingPage> {
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
         if (state is GetCoachingLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is GetCoachingFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -65,7 +65,7 @@ class _CoachingPageState extends State<CoachingPage> {
               filterCoaching = coaching;
               initialized = true;
             }
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
           }
           return bodyForm();
         },

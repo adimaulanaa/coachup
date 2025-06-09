@@ -48,9 +48,9 @@ class _NavbarScreenState extends State<NavbarScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _navItem(0, MediaRes.dashboard, 25),
-              _navItem(1, MediaRes.employee, 25),
-              _navItem(2, MediaRes.employee, 25),
-              _navItem(3, MediaRes.report, 25),
+              _navItem(1, MediaRes.privates, 25),
+              _navItem(2, MediaRes.coaching, 25),
+              _navItem(3, MediaRes.student, 25),
               _navItem(4, MediaRes.profile, 25),
             ],
           ),

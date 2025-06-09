@@ -44,21 +44,21 @@ class _DetailStudentsPageState extends State<DetailStudentsPage> {
         // Menangani efek samping untuk loading dan snackbar/error
         if (state is UpdateStudentsLoading || state is DeleteStudentsLoading) {
           // Menampilkan dialog loading jika diperlukan
-          LoadingDialog.show(context); // Menampilkan loading dialog
+          LoadingDialog.show(); // Menampilkan loading dialog
         } else if (state is UpdateStudentsSuccess) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           isEdit = false;
           context.showSuccesSnackBar(state.message, onNavigate: () {});
         } else if (state is DeleteStudentsSuccess) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           isEdit = false;
           context.showSuccesSnackBar(state.message, onNavigate: () {});
           AppNavigator.pop();
         } else if (state is UpdateStudentsFailure) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           context.showErrorSnackBar(state.message, onNavigate: () {});
         } else if (state is DeleteStudentsFailure) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           context.showErrorSnackBar(state.message, onNavigate: () {});
         }
       },

@@ -1,6 +1,8 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -10,6 +12,7 @@ import 'package:coachup/features/profile/presentation/bloc/profile_event.dart';
 import 'package:coachup/features/profile/presentation/bloc/profile_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -40,26 +43,27 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is GetProfileLoading || state is UpdateProfileLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is GetProfileLoaded) {
           profile = state.data;
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           setData();
         } else if (state is UpdateProfileSuccess) {
+          FocusScope.of(context).unfocus();
           context.read<ProfileBloc>().add(GetProfileEvent());
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showSuccesSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
           );
         } else if (state is GetProfileFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showSuccesSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
           );
         } else if (state is UpdateProfileFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -123,17 +127,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 fontWeight: medium,
               ),
             ),
-            IconButton(
-              icon: Icon(
-                size: 20,
-                isProfile ? Icons.save : Icons.edit,
-              ), // Ganti ikon berdasarkan mode
-              onPressed: () {
-                saveProfile();
-              },
+            CustomInkWell(
+              onTap: () => saveProfile(),
+              child: SvgPicture.asset(
+                isProfile ? MediaRes.saved : MediaRes.edited,
+                fit: BoxFit.contain,
+                width: isProfile ? 17 : 20,
+                // ignore: deprecated_member_use
+                color: AppColors.bgBlack,
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 10),
         CustomTextField(
           controller: nameCtr,
           label: StringResources.pName,
@@ -169,17 +175,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 fontWeight: medium,
               ),
             ),
-            IconButton(
-              icon: Icon(
-                size: 20,
-                isExport ? Icons.save : Icons.edit,
-              ), // Ganti ikon berdasarkan mode
-              onPressed: () {
-                saveExport();
-              },
+            CustomInkWell(
+              onTap: () => saveExport(),
+              child: SvgPicture.asset(
+                isExport ? MediaRes.saved : MediaRes.edited,
+                fit: BoxFit.contain,
+                width: isExport ? 17 : 20,
+                // ignore: deprecated_member_use
+                color: AppColors.bgBlack,
+              ),
             ),
           ],
         ),
+        const SizedBox(height: 10),
         CustomTextField(
           controller: headerCtr,
           label: StringResources.pHeader,

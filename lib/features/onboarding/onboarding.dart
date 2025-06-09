@@ -1,8 +1,8 @@
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_res.dart';
+import 'package:coachup/core/utils/ui_mode_helper.dart';
 import 'package:coachup/features/navbar_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -15,7 +15,7 @@ class _OnboardingState extends State<Onboarding> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    UiModeHelper.enableImmersive();
     // Panggil fungsi tanpa `await` langsung
     _navigateAfterOnboarding();
   }

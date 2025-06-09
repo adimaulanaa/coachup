@@ -61,9 +61,9 @@ class _PrivatesPageState extends State<PrivatesPage> {
       body: BlocListener<PrivatesBloc, PrivatesState>(
         listener: (context, state) {
           if (state is ListPrivatesLoading) {
-            LoadingDialog.show(context);
+            LoadingDialog.show();
           } else if (state is ListPrivatesFailure) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
@@ -75,7 +75,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
             if (state is ListPrivatesLoaded) {
               allPrivates = state.data;
               privates = allPrivates;
-              LoadingDialog.hide(context);
+              LoadingDialog.hide();
             }
             return bodyForm();
           },
@@ -245,7 +245,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
     );
     if (mounted) {
       initialized = false; // reset biar filter di-refresh
-      context.read<PrivatesBloc>().add(GetPrivatesEvent(today));
+      context.read<PrivatesBloc>().add(ListPrivatesEvent(''));
     }
   }
 }

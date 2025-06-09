@@ -42,9 +42,9 @@ class _StudentsPageState extends State<StudentsPage> {
     return BlocListener<StudentsBloc, StudentsState>(
       listener: (context, state) {
         if (state is GetStudentsLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is GetStudentsFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -59,7 +59,7 @@ class _StudentsPageState extends State<StudentsPage> {
               filterStudents = students;
               initialized = true;
             }
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
           }
           return bodyForm(size);
         },

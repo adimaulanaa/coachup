@@ -30,22 +30,29 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  final FocusNode _focusNode = FocusNode();
+  late final FocusNode _internalFocusNode;
   bool _isFocused = false;
+
+  FocusNode get _effectiveFocusNode => widget.focus ?? _internalFocusNode;
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(() {
+
+    _internalFocusNode = FocusNode();
+
+    _effectiveFocusNode.addListener(() {
       setState(() {
-        _isFocused = _focusNode.hasFocus;
+        _isFocused = _effectiveFocusNode.hasFocus;
       });
     });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (widget.focus == null) {
+      _internalFocusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -81,7 +88,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: TextFormField(
               controller: widget.controller,
-              focusNode: _focusNode,
+              focusNode: _internalFocusNode,
               enabled: widget.enabled,
               onChanged: widget.onChanged,
               onFieldSubmitted: widget.onSubmitted,

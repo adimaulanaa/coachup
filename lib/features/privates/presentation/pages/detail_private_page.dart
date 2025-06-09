@@ -5,6 +5,7 @@ import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
+import 'package:coachup/core/utils/pdf_exporter.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/privates/data/models/privates_model.dart';
 import 'package:coachup/features/privates/domain/entities/privates_entity.dart';
@@ -70,11 +71,15 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
           if (state is GetPrivatesLoading ||
               state is UpdatePrivatesLoading ||
               state is DeletePrivatesLoading) {
-            LoadingDialog.show(context);
+            LoadingDialog.show();
           } else if (state is UpdatePrivatesSuccess) {
-            // LoadingDialog.hide(context);
+            // LoadingDialog.hide();
             isInitialized = false;
             isEdit = false;
+            context.showSuccesSnackBar(
+              state.message,
+              onNavigate: () {}, // bottom close
+            );
             _privatesBloc.add(GetPrivatesEvent(widget.private.id.toString()));
           } else if (state is GetPrivatesLoaded) {
             if (!isInitialized) {
@@ -82,24 +87,24 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
               setDataValue(state.data);
               isInitialized = true;
             }
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
           } else if (state is DeletePrivatesSuccess) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             AppNavigator.pop(context);
           } else if (state is GetPrivatesFailure) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
             );
           } else if (state is UpdatePrivatesFailure) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
             );
           } else if (state is DeletePrivatesFailure) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
@@ -116,75 +121,78 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
   }
 
   Widget bodyForm() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          selectedType(),
-          const SizedBox(height: 16),
-          CustomTextField(
-            controller: nameCtr,
-            label: StringResources.prName,
-            enabled: isEdit,
-            onChanged: (value) {
-              checkingInput(value);
-            },
-          ),
-          const SizedBox(height: 16),
-          CustomDateField(
-            controller: dateCtr,
-            label: StringResources.cDate,
-            enabled: isEdit,
-          ),
-          const SizedBox(height: 16),
-          CustomTextField(
-            controller: descriptionCtr,
-            label: StringResources.prDesc,
-            enabled: isEdit,
-            isDescription: true,
-            lines: 5,
-            onChanged: (value) {
-              checkingInput(value);
-            },
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextStudentField(
-                  controller: inputCtr,
-                  focus: inputFocusNode,
-                  label: StringResources.prStudent,
-                  enabled: isEdit,
-                  onChanged: (value) {
-                    checkingInput(value);
-                  },
-                  onSubmitted: (value) {
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            selectedType(),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: nameCtr,
+              label: StringResources.prName,
+              enabled: isEdit,
+              onChanged: (value) {
+                checkingInput(value);
+              },
+            ),
+            const SizedBox(height: 16),
+            CustomDateField(
+              controller: dateCtr,
+              label: StringResources.cDate,
+              enabled: isEdit,
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: descriptionCtr,
+              label: StringResources.prDesc,
+              enabled: isEdit,
+              isDescription: true,
+              lines: 5,
+              onChanged: (value) {
+                checkingInput(value);
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextStudentField(
+                    controller: inputCtr,
+                    focus: inputFocusNode,
+                    label: StringResources.prStudent,
+                    enabled: isEdit,
+                    onChanged: (value) {
+                      checkingInput(value);
+                    },
+                    onSubmitted: (value) {
+                      addMurid();
+                    },
+                  ),
+                ),
+                SizedBox(width: 5),
+                CustomInkWell(
+                  onTap: () {
                     addMurid();
                   },
-                ),
-              ),
-              SizedBox(width: 5),
-              CustomInkWell(
-                onTap: () {
-                  addMurid();
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: AppColors.bgGreySecond, // Placeholder warna
-                    borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: AppColors.bgGreySecond, // Placeholder warna
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(Icons.add, size: 40, color: AppColors.bgColor),
                   ),
-                  child: Icon(Icons.add, size: 40, color: AppColors.bgColor),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          isMurid ? listMuridView() : SizedBox.shrink(),
-          const SizedBox(height: 16),
-        ],
+              ],
+            ),
+            const SizedBox(height: 16),
+            isMurid ? listMuridView() : SizedBox.shrink(),
+            SizedBox(height: size.height * 0.11),
+          ],
+        ),
       ),
     );
   }
@@ -240,7 +248,7 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
         Expanded(
           child: CustomInkWell(
             onTap: () async {
-              // await savePdfToDownload(context, detail);
+              await savePdfToDownloadPrivate(context, private);
             },
             child: viewSelectedType('Download PDF', 1),
           ),

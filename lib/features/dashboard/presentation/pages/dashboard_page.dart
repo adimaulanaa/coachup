@@ -6,6 +6,7 @@ import 'package:coachup/core/utils/custom_view_coach.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
+import 'package:coachup/core/utils/ui_mode_helper.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/dashboard/domain/entities/dashboard_entity.dart';
 import 'package:coachup/features/dashboard/presentation/bloc/dashboard_bloc.dart';
@@ -30,6 +31,7 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    UiModeHelper.enableDefault();
     context.read<DashboardBloc>().add(GetDashboardEvent(today));
   }
 
@@ -38,9 +40,9 @@ class _DashboardPageState extends State<DashboardPage> {
     return BlocListener<DashboardBloc, DashboardState>(
       listener: (context, state) {
         if (state is GetDashboardLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is GetDashboardFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showSuccesSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -52,7 +54,7 @@ class _DashboardPageState extends State<DashboardPage> {
           if (state is GetDashboardLoaded) {
             dash = state.data;
             allCoaches = state.data.coaches;
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
           }
           return bodyForm();
         },
@@ -114,9 +116,9 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         actions: [
           SvgPicture.asset(
-            MediaRes.warning,
+            MediaRes.notification,
             fit: BoxFit.contain,
-            width: 25,
+            width: 20,
             // ignore: deprecated_member_use
             color: AppColors.bgBlack,
           ),

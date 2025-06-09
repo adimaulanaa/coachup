@@ -1,25 +1,31 @@
+import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:flutter/material.dart';
 
 class LoadingDialog {
-  static bool _isShowing = false; // Menambahkan variabel statis untuk tracking status loading
+  static bool _isShowing = false;
 
-  static bool get isShowing => _isShowing; // Getter untuk memeriksa apakah dialog sedang ditampilkan
+  static bool get isShowing => _isShowing;
 
-  static void show(BuildContext context) {
-    if (!_isShowing) {
-      _isShowing = true;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: _CustomLoading()),
-      );
-    }
+  static Future<void> show() async {
+    if (_isShowing) return;
+    _isShowing = true;
+
+    // Pastikan context dari navigatorKey valid
+    if (AppNavigator.navigatorKey.currentContext == null) return;
+
+    await showDialog(
+      context: AppNavigator.context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: _CustomLoading()),
+    );
   }
 
-  static void hide(BuildContext context) {
-    if (_isShowing) {
-      _isShowing = false;
-      if (Navigator.canPop(context)) Navigator.pop(context);
+  static void hide() {
+    if (!_isShowing) return;
+    _isShowing = false;
+
+    if (AppNavigator.canPop()) {
+      AppNavigator.pop();
     }
   }
 }

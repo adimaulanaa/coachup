@@ -50,9 +50,9 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
     return BlocListener<CoachingBloc, CoachingState>(
       listener: (context, state) {
         if (state is CreateCoachingLoading || state is CreateCoachingLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is CreateCoachingSuccess) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showSuccesSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -61,13 +61,13 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
             AppNavigator.pop();
           });
         } else if (state is CreateCoachingFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
           );
         } else if (state is GetStudentCFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -78,7 +78,7 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
         builder: (context, state) {
           if (state is GetStudentCLoaded) {
             student = state.student;
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
           }
           return bodyForm();
         },

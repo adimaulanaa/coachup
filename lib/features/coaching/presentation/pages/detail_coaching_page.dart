@@ -59,21 +59,21 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
             state is DeleteCoachingLoading ||
             state is DetailCoachingLoading) {
           // Menampilkan dialog loading jika diperlukan
-          LoadingDialog.show(context); // Menampilkan loading dialog
+          LoadingDialog.show(); // Menampilkan loading dialog
         } else if (state is UpdateCoachingSuccess) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           isEdit = false;
           context.showSuccesSnackBar(state.message, onNavigate: () {});
         } else if (state is DeleteCoachingSuccess) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           isEdit = false;
           context.showSuccesSnackBar(state.message, onNavigate: () {});
           AppNavigator.pop();
         } else if (state is UpdateCoachingFailure) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           context.showErrorSnackBar(state.message, onNavigate: () {});
         } else if (state is DeleteCoachingFailure) {
-          LoadingDialog.hide(context); // Menyembunyikan loading dialog
+          LoadingDialog.hide(); // Menyembunyikan loading dialog
           context.showErrorSnackBar(state.message, onNavigate: () {});
         }
       },
@@ -81,7 +81,7 @@ class _DetailCoachingPageState extends State<DetailCoachingPage> {
         builder: (context, state) {
           if (state is DetailCoachingLoaded) {
             detail = state.detail;
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             setData();
           }
           return bodyForm();

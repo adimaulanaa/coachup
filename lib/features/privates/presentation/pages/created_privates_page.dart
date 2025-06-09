@@ -59,16 +59,16 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
       body: BlocListener<PrivatesBloc, PrivatesState>(
         listener: (context, state) {
           if (state is CreatedPrivatesLoading) {
-            LoadingDialog.show(context);
+            LoadingDialog.show();
           } else if (state is CreatedPrivatesSuccess) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
             );
             AppNavigator.pop(context);
           } else if (state is CreatedPrivatesFailure) {
-            LoadingDialog.hide(context);
+            LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
               onNavigate: () {}, // bottom close
@@ -95,6 +95,7 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
   }
 
   Widget bodyForm() {
+    Size size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.only(left: 20, right: 20),
@@ -158,7 +159,7 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
             ),
             const SizedBox(height: 16),
             isMurid ? listMuridView() : SizedBox.shrink(),
-            const SizedBox(height: 16),
+            SizedBox(height: size.height * 0.11),
           ],
         ),
       ),

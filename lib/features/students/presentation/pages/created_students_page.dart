@@ -41,9 +41,9 @@ class _CreatedStudentsPageState extends State<CreatedStudentsPage> {
     return BlocListener<StudentsBloc, StudentsState>(
       listener: (context, state) {
         if (state is CreateStudentsLoading) {
-          LoadingDialog.show(context);
+          LoadingDialog.show();
         } else if (state is CreateStudentsSuccess) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showSuccesSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
@@ -52,7 +52,7 @@ class _CreatedStudentsPageState extends State<CreatedStudentsPage> {
             AppNavigator.pop();
           });
         } else if (state is CreateStudentsFailure) {
-          LoadingDialog.hide(context);
+          LoadingDialog.hide();
           context.showErrorSnackBar(
             state.message,
             onNavigate: () {}, // bottom close
