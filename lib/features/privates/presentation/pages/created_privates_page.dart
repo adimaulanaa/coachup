@@ -1,5 +1,6 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_botton.dart';
@@ -13,6 +14,7 @@ import 'package:coachup/features/privates/presentation/bloc/privates_event.dart'
 import 'package:coachup/features/privates/presentation/bloc/privates_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreatedPrivatesPage extends StatefulWidget {
   const CreatedPrivatesPage({super.key});
@@ -140,19 +142,16 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
                     },
                   ),
                 ),
-                SizedBox(width: 5),
+                SizedBox(width: 10),
                 CustomInkWell(
                   onTap: () {
                     addMurid();
                   },
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: AppColors.bgGreySecond, // Placeholder warna
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(Icons.add, size: 40, color: AppColors.bgColor),
+                  child: SvgPicture.asset(
+                    MediaRes.addStudent,
+                    // ignore: deprecated_member_use
+                    color: AppColors.primary,
+                    width: 30,
                   ),
                 ),
               ],

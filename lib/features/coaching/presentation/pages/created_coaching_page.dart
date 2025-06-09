@@ -158,7 +158,7 @@ class _CreatedCoachingPageState extends State<CreatedCoachingPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              CustomSearchField(
+              CustomSearchCoachField(
                 label: 'Pilih Siswa',
                 value: selectedStudent,
                 items: student,

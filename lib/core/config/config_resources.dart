@@ -10,6 +10,9 @@ class StringResources {
   // time to verification OTP
   static const int remainingTime = 180; // for minutes
   static const int timeOutServer = 120; // for minutes
+  static const String saved = "Saved";
+  static const String edited = "Edited";
+  static const String deleted = "Deleted";
 
   //! Core Network
   static const String networkFailureMessage = "CoachUp";

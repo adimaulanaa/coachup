@@ -1,9 +1,9 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
-import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_search_field.dart';
 import 'package:coachup/core/utils/custom_view_coach.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
@@ -16,7 +16,6 @@ import 'package:coachup/features/coaching/presentation/pages/created_coaching_pa
 import 'package:coachup/features/coaching/presentation/pages/detail_coaching_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 class CoachingPage extends StatefulWidget {
   const CoachingPage({super.key});
@@ -100,70 +99,18 @@ class _CoachingPageState extends State<CoachingPage> {
               Row(
                 children: [
                   Expanded(
-                    // Membungkus TextFormField dengan Expanded untuk memberi ruang
-                    child: TextFormField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Nama Sekolah...',
-                        hintStyle: transTextstyle.copyWith(
-                          fontSize: 16,
-                          fontWeight: light,
-                          color: AppColors.bgGreySecond,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                        filled: true,
-                        fillColor:
-                            Colors.white, // Pastikan fillColor juga putih
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SvgPicture.asset(
-                            MediaRes.warning,
-                            // ignore: deprecated_member_use
-                            color: AppColors.bgGreySecond,
-                            width: 20,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: CustomInkWell(
-                            onTap: () {
-                              // Menghapus teks saat diklik
-                              searchController.clear();
-                              search('');
-                            },
-                            child: SvgPicture.asset(
-                              MediaRes.warning,
-                              // ignore: deprecated_member_use
-                              color: AppColors.bgGreySecond,
-                              width: 20,
-                            ),
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 14.0),
-                      ),
-                      onChanged: (value) {
-                        search(value);
-                      },
-                      maxLines: 1,
-                      style: blackTextstyle.copyWith(
-                        fontSize: 16,
-                        fontWeight: light,
-                      ),
-                    ),
+                  child: CustomSearchField(
+                    controller: searchController,
+                    hintText: 'Cari Nama Sekolah...',
+                    onChanged: (value) {
+                      search(value);
+                    },
+                    onClear: () {
+                      searchController.clear();
+                      search('');
+                    },
                   ),
+                ),
                   const SizedBox(width: 5),
                   CustomInkWell(
                     onTap: () {

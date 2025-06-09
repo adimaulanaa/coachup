@@ -4,6 +4,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_search_field.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -45,7 +46,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
     return Scaffold(
       backgroundColor: AppColors.bgGrey,
       appBar: AppBar(
-        backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.bgGrey,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -74,7 +75,10 @@ class _PrivatesPageState extends State<PrivatesPage> {
           builder: (context, state) {
             if (state is ListPrivatesLoaded) {
               allPrivates = state.data;
-              privates = allPrivates;
+              if (!initialized) {
+                privates = allPrivates;
+                initialized = true;
+              }
               LoadingDialog.hide();
             }
             return bodyForm();
@@ -94,81 +98,28 @@ class _PrivatesPageState extends State<PrivatesPage> {
             Row(
               children: [
                 Expanded(
-                  // Membungkus TextFormField dengan Expanded untuk memberi ruang
-                  child: TextFormField(
+                  child: CustomSearchField(
                     controller: searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Cari Nama Private...',
-                      hintStyle: transTextstyle.copyWith(
-                        fontSize: 16,
-                        fontWeight: light,
-                        color: AppColors.bgGreySecond,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide:
-                            const BorderSide(color: Colors.blue, width: 1.5),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white, // Pastikan fillColor juga putih
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: SvgPicture.asset(
-                          MediaRes.warning,
-                          // ignore: deprecated_member_use
-                          color: AppColors.bgGreySecond,
-                          width: 20,
-                        ),
-                      ),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: CustomInkWell(
-                          onTap: () {
-                            searchController.clear();
-                            // search('');
-                          },
-                          child: SvgPicture.asset(
-                            MediaRes.warning,
-                            // ignore: deprecated_member_use
-                            color: AppColors.bgGreySecond,
-                            width: 20,
-                          ),
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 14.0),
-                    ),
+                    hintText: 'Cari Nama Private...',
                     onChanged: (value) {
-                      // search(value);
+                      search(value);
                     },
-                    maxLines: 1,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 16,
-                      fontWeight: light,
-                    ),
+                    onClear: () {
+                      searchController.clear();
+                      search('');
+                    },
                   ),
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 10),
                 CustomInkWell(
                   onTap: () {
                     navCreated();
                   },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300], // Placeholder warna
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.add, size: 30, color: Colors.grey),
+                  child: SvgPicture.asset(
+                    MediaRes.created,
+                    // ignore: deprecated_member_use
+                    color: AppColors.bgGreySecond,
+                    width: 30,
                   ),
                 ),
               ],
@@ -247,5 +198,18 @@ class _PrivatesPageState extends State<PrivatesPage> {
       initialized = false; // reset biar filter di-refresh
       context.read<PrivatesBloc>().add(ListPrivatesEvent(''));
     }
+  }
+
+  void search(String query) {
+    final lowerCaseQuery = query.toLowerCase(); // Pencarian berdasarkan nama
+    privates = [];
+    if (lowerCaseQuery.isEmpty) {
+      privates = allPrivates;
+    } else {
+      privates = allPrivates
+          .where((e) => e.name!.toLowerCase().contains(lowerCaseQuery))
+          .toList();
+    }
+    setState(() {});
   }
 }

@@ -4,6 +4,7 @@ import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_search_field.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -93,84 +94,28 @@ class _StudentsPageState extends State<StudentsPage> {
               Row(
                 children: [
                   Expanded(
-                    // Membungkus TextFormField dengan Expanded untuk memberi ruang
-                    child: TextFormField(
+                    child: CustomSearchField(
                       controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari Nama...',
-                        hintStyle: transTextstyle.copyWith(
-                          fontSize: 16,
-                          fontWeight: light,
-                          color: AppColors.bgGreySecond,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              const BorderSide(color: Colors.blue, width: 1.5),
-                        ),
-                        filled: true,
-                        fillColor:
-                            Colors.white, // Pastikan fillColor juga putih
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: SvgPicture.asset(
-                            MediaRes.warning,
-                            // ignore: deprecated_member_use
-                            color: AppColors.bgGreySecond,
-                            width: 20,
-                          ),
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: CustomInkWell(
-                            onTap: () {
-                              // Menghapus teks saat diklik
-                              searchController.clear();
-                              search('');
-                            },
-                            child: SvgPicture.asset(
-                              MediaRes.warning,
-                              // ignore: deprecated_member_use
-                              color: AppColors.bgGreySecond,
-                              width: 20,
-                            ),
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 14.0),
-                      ),
+                      hintText: 'Cari Nama...',
                       onChanged: (value) {
                         search(value);
                       },
-                      maxLines: 1,
-                      style: blackTextstyle.copyWith(
-                        fontSize: 16,
-                        fontWeight: light,
-                      ),
+                      onClear: () {
+                        searchController.clear();
+                        search('');
+                      },
                     ),
                   ),
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 10),
                   CustomInkWell(
                     onTap: () {
                       navCreated();
                     },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300], // Placeholder warna
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child:
-                          const Icon(Icons.add, size: 30, color: Colors.grey),
+                    child: SvgPicture.asset(
+                      MediaRes.addStudent,
+                      // ignore: deprecated_member_use
+                      color: AppColors.primary,
+                      width: 30,
                     ),
                   ),
                 ],
@@ -194,15 +139,15 @@ class _StudentsPageState extends State<StudentsPage> {
   }
 
   Widget listStudents(Size size, StudentEntity e) {
+    bool active = e.active == 'true' ? true : false;
     return CustomInkWell(
       onTap: () async {
-        // Melakukan navigasi ke halaman detail
         await AppNavigator.push(
           DetailStudentsPage(students: e),
           transition: TransitionType.fade,
         );
         if (mounted) {
-          // Lakukan refresh atau panggil event untuk mengambil data students
+          initialized = false;
           context.read<StudentsBloc>().add(GetStudentsEvent());
         }
       },
@@ -214,33 +159,42 @@ class _StudentsPageState extends State<StudentsPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    e.name,
-                    style: blackTextstyle.copyWith(
-                      fontSize: 15,
-                      fontWeight: medium,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${e.studentClass} - ${e.collage}',
-                    style: blackTextstyle.copyWith(
-                      fontSize: 13,
-                      fontWeight: medium,
-                    ),
-                  ),
-                ],
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 4,
+                decoration: BoxDecoration(
+                  color: active ? AppColors.primary : AppColors.bgGreySecond,
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      e.name,
+                      style: blackTextstyle.copyWith(
+                        fontSize: 15,
+                        fontWeight: medium,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${e.studentClass} - ${e.collage}',
+                      style: blackTextstyle.copyWith(
+                        fontSize: 13,
+                        fontWeight: medium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

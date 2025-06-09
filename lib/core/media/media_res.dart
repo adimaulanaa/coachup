@@ -11,6 +11,7 @@ class MediaRes {
   static const indicatorNav = '$_baseIcon/indicator-navbar.svg';
   static const dashboard = '$_baseIcon/dashboard.svg';
   static const profile = '$_baseIcon/settings.svg';
+  static const print = '$_baseIcon/prints.svg';
   static const student = '$_baseIcon/student.svg';
   static const coaching = '$_baseIcon/coaching.svg';
   static const privates = '$_baseIcon/privates.svg';
@@ -19,10 +20,18 @@ class MediaRes {
   static const onNotification = '$_baseIcon/on-notification.svg';
   static const edited = '$_baseIcon/edited.svg';
   static const saved = '$_baseIcon/saved.svg';
+  static const deleted = '$_baseIcon/deleted.svg';
+  static const created = '$_baseIcon/created.svg';
+  static const search = '$_baseIcon/search.svg';
+  static const closeCircle = '$_baseIcon/close-circle.svg';
 
   // ! Onboarding
   static const omboarding = '$_baseImage/logo.png';
   // static const nfc = '$_baseIcon/nfc.svg';
+
+  // ! Student
+  static const addStudent = '$_baseIcon/add-student.svg';
+  static const deletedStudent = '$_baseIcon/deleted-student.svg';
 
 
   

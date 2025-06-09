@@ -1,8 +1,10 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_selected_type.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/pdf_exporter.dart';
@@ -12,9 +14,9 @@ import 'package:coachup/features/privates/domain/entities/privates_entity.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_event.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_state.dart';
-import 'package:coachup/features/privates/presentation/widgets/widgets_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class DetailPrivatePage extends StatefulWidget {
   final PrivatesEntity private;
@@ -171,19 +173,16 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
                     },
                   ),
                 ),
-                SizedBox(width: 5),
+                SizedBox(width: 10),
                 CustomInkWell(
                   onTap: () {
                     addMurid();
                   },
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: AppColors.bgGreySecond, // Placeholder warna
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(Icons.add, size: 40, color: AppColors.bgColor),
+                  child: SvgPicture.asset(
+                    MediaRes.addStudent,
+                    // ignore: deprecated_member_use
+                    color: AppColors.primary,
+                    width: 30,
                   ),
                 ),
               ],
@@ -250,7 +249,12 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
             onTap: () async {
               await savePdfToDownloadPrivate(context, private);
             },
-            child: viewSelectedType('Download PDF', 1),
+            child: SelectedTypeView(
+              text: 'PDF',
+              type: 1,
+              iconPath: MediaRes.print,
+              widthIc: 16,
+            ),
           ),
         ),
         Expanded(
@@ -259,7 +263,12 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
               String id = private.id ?? '';
               _privatesBloc.add(DeletePrivatesEvent(id));
             },
-            child: viewSelectedType('Deleted', 0),
+            child: SelectedTypeView(
+              text: 'Deleted',
+              type: 0,
+              iconPath: MediaRes.deleted,
+              widthIc: 16,
+            ),
           ),
         ),
         Expanded(
@@ -271,7 +280,12 @@ class _DetailPrivatePageState extends State<DetailPrivatePage> {
                 toggleEdit(); // Aktifkan mode edit
               }
             },
-            child: viewSelectedType(isEdit ? 'Saved' : 'Edited', 2),
+            child: SelectedTypeView(
+              text: isEdit ? StringResources.saved : StringResources.edited,
+              type: 2,
+              iconPath: isEdit ? MediaRes.saved : MediaRes.edited,
+              widthIc: 16,
+            ),
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:flutter/material.dart';
 
@@ -24,10 +25,10 @@ class GenderButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.grey[300],
+          color: isSelected ? AppColors.primary : Colors.grey[300],
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey,
+            color: isSelected ? AppColors.primary : Colors.grey,
             width: 2,
           ),
         ),

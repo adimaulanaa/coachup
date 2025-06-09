@@ -1,7 +1,10 @@
 import 'package:coachup/core/config/config_resources.dart';
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
+import 'package:coachup/core/utils/custom_inkwell.dart';
+import 'package:coachup/core/utils/custom_selected_type.dart';
 import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -79,7 +82,7 @@ class _DetailStudentsPageState extends State<DetailStudentsPage> {
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          isEdit ? StringResources.studentEdited : widget.students.name,
+          isEdit ? StringResources.studentEdited : nameController.text,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: blackTextstyle.copyWith(
@@ -87,39 +90,51 @@ class _DetailStudentsPageState extends State<DetailStudentsPage> {
             fontWeight: medium,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              String id = widget.students.id;
-              context.read<StudentsBloc>().add(DeleteStudentsEvent(id));
-            },
-            icon: const Icon(
-              Icons.delete,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Icon(
-                isEdit ? Icons.save : Icons.edit,
-              ), // Ganti ikon berdasarkan mode
-              onPressed: () {
-                if (isEdit) {
-                  saveChanges(); // Simpan perubahan jika dalam mode edit
-                } else {
-                  toggleEdit(); // Aktifkan mode edit
-                }
-              },
-            ),
-          ),
-        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(17.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomInkWell(
+                      onTap: () {
+                        String id = widget.students.id;
+                        context
+                            .read<StudentsBloc>()
+                            .add(DeleteStudentsEvent(id));
+                      },
+                      child: SelectedTypeView(
+                        text: 'Delete',
+                        type: 1,
+                        iconPath: MediaRes.deletedStudent,
+                        widthIc: 16,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomInkWell(
+                      onTap: () {
+                        if (isEdit) {
+                          saveChanges(); // Simpan perubahan jika dalam mode edit
+                        } else {
+                          toggleEdit(); // Aktifkan mode edit
+                        }
+                      },
+                      child: SelectedTypeView(
+                        text: isEdit ? StringResources.saved : StringResources.edited,
+                        iconPath: isEdit ? MediaRes.saved : MediaRes.edited,
+                        type: 2,
+                        widthIc: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -132,6 +147,8 @@ class _DetailStudentsPageState extends State<DetailStudentsPage> {
                   ),
                   Switch(
                     value: isActive,
+                    activeColor: AppColors.primary,
+                    inactiveTrackColor: AppColors.bgGrey,
                     onChanged: isEdit
                         ? (val) {
                             setState(() {
@@ -142,7 +159,6 @@ class _DetailStudentsPageState extends State<DetailStudentsPage> {
                   )
                 ],
               ),
-              const SizedBox(height: 16),
               buildEditForm(),
               const SizedBox(height: 16),
             ],

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:coachup/core/media/media_colors.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
-class CustomSearchField extends StatefulWidget {
+class CustomSearchCoachField extends StatefulWidget {
   final StudentEntity? value;
   final List<StudentEntity> items;
   final String label;
   final bool enabled;
   final ValueChanged<StudentEntity?>? onChanged;
 
-  const CustomSearchField({
+  const CustomSearchCoachField({
     super.key,
     required this.value,
     required this.items,
@@ -19,10 +19,10 @@ class CustomSearchField extends StatefulWidget {
   });
 
   @override
-  State<CustomSearchField> createState() => _CustomSearchFieldState();
+  State<CustomSearchCoachField> createState() => _CustomSearchCoachFieldState();
 }
 
-class _CustomSearchFieldState extends State<CustomSearchField> {
+class _CustomSearchCoachFieldState extends State<CustomSearchCoachField> {
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
