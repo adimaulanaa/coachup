@@ -27,6 +27,7 @@ class MediaRes {
 
   // ! Onboarding
   static const omboarding = '$_baseImage/logo.png';
+  static const textLogo = '$_baseImage/text-logo.png';
   // static const nfc = '$_baseIcon/nfc.svg';
 
   // ! Student

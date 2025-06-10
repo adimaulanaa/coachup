@@ -1,5 +1,7 @@
 import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class BuildBoxAttendance extends StatefulWidget {
   final bool type;
@@ -25,6 +27,47 @@ class _BuildBoxAttendanceState extends State<BuildBoxAttendance> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(child: Text(widget.type ? 'CheckIn' : 'CheckOut')),
+    );
+  }
+}
+
+class ViewTextTitle extends StatelessWidget {
+  final String icons;
+  final int total;
+  final String type;
+  const ViewTextTitle({
+    super.key,
+    required this.icons,
+    required this.total,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          icons,
+          width: 20,
+          // ignore: deprecated_member_use
+          color: AppColors.primary,
+        ),
+        SizedBox(width: 10),
+        Text(
+          total.toString(),
+          style: blackTextstyle.copyWith(
+            fontSize: 13,
+            fontWeight: bold,
+          ),
+        ),
+        Text(
+          ' $type',
+          style: blackTextstyle.copyWith(
+            fontSize: 13,
+            fontWeight: medium,
+          ),
+        ),
+      ],
     );
   }
 }

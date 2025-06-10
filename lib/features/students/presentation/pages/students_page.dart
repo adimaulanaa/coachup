@@ -88,7 +88,7 @@ class _StudentsPageState extends State<StudentsPage> {
                         Expanded(
                           child: CustomSearchField(
                             controller: searchController,
-                            hintText: 'Cari Nama...',
+                            hintText: 'Cari nama...',
                             onChanged: (value) {
                               search(value);
                             },
