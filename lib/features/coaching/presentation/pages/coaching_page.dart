@@ -116,7 +116,7 @@ class _CoachingPageState extends State<CoachingPage> {
                           child: SvgPicture.asset(
                             MediaRes.created,
                             // ignore: deprecated_member_use
-                            color: AppColors.bgGreySecond,
+                            color: AppColors.primary,
                             width: 30,
                           ),
                         ),

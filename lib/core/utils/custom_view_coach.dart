@@ -1,6 +1,9 @@
+import 'package:coachup/core/media/media_colors.dart';
+import 'package:coachup/core/media/media_res.dart';
 import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 class ListCoaching extends StatelessWidget {
@@ -58,13 +61,6 @@ class ListCoaching extends StatelessWidget {
                     fontWeight: medium,
                   ),
                 ),
-                Text(
-                  'Member : $member murid',
-                  style: blackTextstyle.copyWith(
-                    fontSize: 13,
-                    fontWeight: medium,
-                  ),
-                ),
                 const SizedBox(height: 4),
                 Text(
                   'Deskripsi : ${dt.description}',
@@ -75,6 +71,32 @@ class ListCoaching extends StatelessWidget {
                     fontWeight: medium,
                   ),
                 ),
+                Row(
+                children: [
+                  SvgPicture.asset(
+                    MediaRes.student,
+                    // ignore: deprecated_member_use
+                    color: AppColors.primary,
+                    width: 20,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    member.toString(),
+                    style: blackTextstyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: bold,
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    'Murid',
+                    style: blackTextstyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: reguler,
+                    ),
+                  ),
+                ],
+              ),
               ],
             ),
           ),

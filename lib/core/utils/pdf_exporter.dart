@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:coachup/core/utils/formater_datetime.dart';
 import 'package:coachup/core/utils/permission_storage.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
 import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
@@ -49,7 +50,7 @@ Future<Uint8List> generateCoachingPdf(DetailCoachingEntity detail) async {
     fontSize: 10,
     fontWeight: pw.FontWeight.bold,
   );
-  final tgl = formatTanggalManual(detail.date.toString());
+  final tgl = formatDateManual(detail.date.toString());
   pdf.addPage(
     pw.Page(
       margin: const pw.EdgeInsets.all(32),
@@ -254,40 +255,6 @@ Future<void> savePdfToDownload(
   print(' saved at: $savedPath');
 }
 
-String formatTanggalManual(String tanggal) {
-  final date = DateTime.parse(tanggal);
-
-  const hari = [
-    'Senin',
-    'Selasa',
-    'Rabu',
-    'Kamis',
-    'Jumat',
-    'Sabtu',
-    'Minggu',
-  ];
-
-  const bulan = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember',
-  ];
-
-  final namaHari = hari[date.weekday - 1];
-  final namaBulan = bulan[date.month - 1];
-
-  return "$namaHari, ${date.day} $namaBulan ${date.year}";
-}
-
 Future<void> savePdfToDownloadPrivate(
   BuildContext context,
   PrivatesEntity detail,
@@ -388,7 +355,7 @@ Future<Uint8List> generatePrivatePdf(PrivatesEntity detail) async {
     fontSize: 10,
     fontWeight: pw.FontWeight.bold,
   );
-  final tgl = formatTanggalManual(detail.date.toString());
+  final tgl = formatDateManual(detail.date.toString());
   pdf.addPage(
     pw.Page(
       margin: const pw.EdgeInsets.all(32),
