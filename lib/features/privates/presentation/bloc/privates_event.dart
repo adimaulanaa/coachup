@@ -7,12 +7,13 @@ abstract class PrivatesEvent extends Equatable {
 }
 
 class ListPrivatesEvent extends PrivatesEvent {
-  final String day;
+  final String str;
+  final String fns;
 
-  const ListPrivatesEvent(this.day);
+  const ListPrivatesEvent(this.str, this.fns);
   
   @override
-  List<Object?> get props => [day];
+  List<Object?> get props => [str, fns];
 }
 
 class GetPrivatesEvent extends PrivatesEvent {

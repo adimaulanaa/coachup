@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class PrivatesLocalDataSource {
-  Future<List<PrivatesModel>> list(String day);
+  Future<List<PrivatesModel>> list(String str, String fns);
   Future<PrivatesModel> get(String id);
   Future<String> delete(String id);
   Future<String> create(PrivatesEntity data);
@@ -18,34 +18,31 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   final db = DatabaseService();
 
   @override
-  Future<List<PrivatesModel>> list(String day) async {
+  Future<List<PrivatesModel>> list(String str, String fns) async {
     final database = await db.database;
-
     List<Map<String, dynamic>> maps;
-
-    if (day.isEmpty) {
-      // Ambil data 30 hari terakhir
-      final now = DateTime.now();
-      final thirtyDaysAgo = now.subtract(Duration(days: 30));
-      final nowStr = DateFormat('yyyy-MM-dd').format(now);
-      final pastStr = DateFormat('yyyy-MM-dd').format(thirtyDaysAgo);
-
+    if (str.isNotEmpty && fns.isNotEmpty) {
+      // Ambil data di antara str dan fns
       maps = await database.query(
         'privates',
         where: 'date BETWEEN ? AND ?',
-        whereArgs: [pastStr, nowStr],
+        whereArgs: [str, fns],
       );
     } else {
-      // Ambil data dengan tanggal yang sama persis
+      // Ambil data 30 hari terakhir
+      final now = DateTime.now();
+      final startOfMonth = DateTime(now.year, now.month, 1);
+      final endOfMonth = DateTime(now.year, now.month + 1, 0);
+      final startStr = DateFormat('yyyy-MM-dd').format(startOfMonth);
+      final endStr = DateFormat('yyyy-MM-dd').format(endOfMonth);
       maps = await database.query(
         'privates',
-        where: 'date = ?',
-        whereArgs: [day],
+        where: 'date BETWEEN ? AND ?',
+        whereArgs: [startStr, endStr],
       );
     }
-    List<PrivatesModel> list =
-        maps.map((e) => PrivatesModel.fromMap(e)).toList();
-    return list;
+    final result = maps.map((m) => PrivatesModel.fromMap(m)).toList();
+    return result;
   }
 
   @override

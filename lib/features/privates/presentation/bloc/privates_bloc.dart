@@ -30,7 +30,7 @@ class PrivatesBloc extends Bloc<PrivatesEvent, PrivatesState> {
     on<ListPrivatesEvent>((event, emit) async {
       emit(ListPrivatesLoading());
 
-      final result = await list(event.day);
+      final result = await list(event.str, event.fns);
       result.fold(
         (failure) => emit(ListPrivatesFailure(failure.message)),
         (success) => emit(ListPrivatesLoaded(success)),

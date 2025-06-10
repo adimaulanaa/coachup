@@ -8,7 +8,7 @@ class ListPrivatesUseCase {
 
   ListPrivatesUseCase(this.repository);
 
-  Future<Either<Failure, List<PrivatesModel>>> call(String id) {
-    return repository.list(id);
+  Future<Either<Failure, List<PrivatesModel>>> call(String str, String fns) {
+    return repository.list(str, fns);
   }
 }

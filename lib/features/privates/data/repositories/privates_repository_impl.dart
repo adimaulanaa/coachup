@@ -22,10 +22,10 @@ class PrivatesRepositoryImpl implements PrivatesRepository {
 
   @override
   Future<Either<Failure, List<PrivatesModel>>> list(
-      String entity) async {
+      String str, String fns) async {
     if (await networkInfo.isConnected) {
       try {
-        final local = await localDatasource.list(entity);
+        final local = await localDatasource.list(str, fns);
         return Right(local);
       } on BadRequestException catch (e) {
         return Left(BadRequestFailure(e.toString()));

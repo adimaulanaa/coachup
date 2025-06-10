@@ -59,12 +59,14 @@ class StringResources {
   static const String pFPic = "Text PIC";
   static const String pFCoach = "Text Pelatih";
 
-  //! Coaching
+  //! Private
   static const String privates = "Daftar Private";
   static const String prEdited = "Edit Private";
   static const String prCreated = "Buat Private Baru";
   static const String prName = "Nama Kegiatan";
   static const String prDesc = "Deskripsi Pelatihan";
   static const String prStudent = "Nama Murid";
+  static const String prDateStr = "Start Date";
+  static const String prDateFns = "Finish Date";
 
 }

@@ -127,12 +127,14 @@ class CustomDateField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
   final bool enabled;
+  final Function(DateTime date)? onDatePicked; // ← Tambahan
 
   const CustomDateField({
     super.key,
     required this.controller,
     required this.label,
     this.enabled = true,
+    this.onDatePicked, // ← Tambahan
   });
 
   @override
@@ -170,6 +172,12 @@ class _CustomDateFieldState extends State<CustomDateField> {
     if (picked != null) {
       final formattedDate = DateFormat('yyyy-MM-dd').format(picked);
       widget.controller.text = formattedDate;
+
+      if (widget.onDatePicked != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onDatePicked!(picked);
+        });
+      }
     }
   }
 
@@ -379,8 +387,7 @@ class _CustomTextStudentFieldState extends State<CustomTextStudentField> {
   Widget build(BuildContext context) {
     final Color outerBorderColor =
         _isFocused ? AppColors.primary.withOpacity(0.4) : Colors.transparent;
-    final Color innerBorderColor =
-        _isFocused ? AppColors.primary : Colors.grey;
+    final Color innerBorderColor = _isFocused ? AppColors.primary : Colors.grey;
     final Color labelColor = _isFocused ? Colors.black : Colors.grey;
 
     return Container(

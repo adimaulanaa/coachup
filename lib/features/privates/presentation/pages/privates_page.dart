@@ -5,6 +5,7 @@ import 'package:coachup/core/media/media_text.dart';
 import 'package:coachup/core/utils/app_navigator.dart';
 import 'package:coachup/core/utils/custom_inkwell.dart';
 import 'package:coachup/core/utils/custom_search_field.dart';
+import 'package:coachup/core/utils/custom_textfield.dart';
 import 'package:coachup/core/utils/empty_list_data.dart';
 import 'package:coachup/core/utils/loading_dialog.dart';
 import 'package:coachup/core/utils/snackbar_extension.dart';
@@ -29,6 +30,8 @@ class PrivatesPage extends StatefulWidget {
 class _PrivatesPageState extends State<PrivatesPage> {
   late PrivatesBloc _privatesBloc;
   TextEditingController searchController = TextEditingController();
+  final TextEditingController dateStrCtr = TextEditingController();
+  final TextEditingController dateFnsCtr = TextEditingController();
   bool initialized = false;
   String today = '';
   List<PrivatesEntity> privates = [];
@@ -38,107 +41,123 @@ class _PrivatesPageState extends State<PrivatesPage> {
     super.initState();
     today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     _privatesBloc = context.read<PrivatesBloc>();
-    _privatesBloc.add(ListPrivatesEvent(''));
+    requestSearch();
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: AppColors.bgGrey,
-      appBar: AppBar(
         backgroundColor: AppColors.bgGrey,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        title: Text(
-          StringResources.privates,
-          style: blackTextstyle.copyWith(
-            fontSize: 18,
-            fontWeight: bold,
+        appBar: AppBar(
+          backgroundColor: AppColors.bgGrey,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          title: Text(
+            StringResources.privates,
+            style: blackTextstyle.copyWith(
+              fontSize: 18,
+              fontWeight: bold,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: BlocListener<PrivatesBloc, PrivatesState>(
-        listener: (context, state) {
-          if (state is ListPrivatesLoading) {
-            LoadingDialog.show();
-          } else if (state is ListPrivatesFailure) {
-            LoadingDialog.hide();
-            context.showSuccesSnackBar(
-              state.message,
-              onNavigate: () {}, // bottom close
-            );
-          }
-        },
-        child: BlocBuilder<PrivatesBloc, PrivatesState>(
-          builder: (context, state) {
-            if (state is ListPrivatesLoaded) {
+        body: BlocListener<PrivatesBloc, PrivatesState>(
+          listener: (context, state) {
+            if (state is ListPrivatesLoading) {
+              LoadingDialog.show();
+            } else if (state is ListPrivatesFailure) {
+              LoadingDialog.hide();
+              context.showSuccesSnackBar(
+                state.message,
+                onNavigate: () {},
+              );
+            } else if (state is ListPrivatesLoaded) {
               allPrivates = state.data;
-              if (!initialized) {
-                privates = allPrivates;
-                initialized = true;
-              }
+              privates = allPrivates;
+              initialized = true;
               LoadingDialog.hide();
             }
-            return bodyForm();
           },
-        ),
-      ),
-    );
-  }
+          child: BlocBuilder<PrivatesBloc, PrivatesState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomSearchField(
+                              controller: searchController,
+                              hintText: 'Cari Nama Private...',
+                              onChanged: (value) {
+                                search(value);
+                              },
+                              onClear: () {
+                                searchController.clear();
+                                search('');
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          CustomInkWell(
+                            onTap: () {
+                              navCreated();
+                            },
+                            child: SvgPicture.asset(
+                              MediaRes.created,
+                              // ignore: deprecated_member_use
+                              color: AppColors.bgGreySecond,
+                              width: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      // 🔽 Date Filter Widget (misalnya 2 input tanggal)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDateField(
+                              controller: dateStrCtr,
+                              label: StringResources.prDateStr,
+                              onDatePicked: (_) => requestSearch(),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomDateField(
+                              controller: dateFnsCtr,
+                              label: StringResources.prDateFns,
+                              onDatePicked: (_) => requestSearch(),
+                            ),
+                          ),
+                        ],
+                      ),
 
-  Widget bodyForm() {
-    Size size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CustomSearchField(
-                    controller: searchController,
-                    hintText: 'Cari Nama Private...',
-                    onChanged: (value) {
-                      search(value);
-                    },
-                    onClear: () {
-                      searchController.clear();
-                      search('');
-                    },
+                      const SizedBox(height: 16),
+                      // 🔽 Body content
+                      const SizedBox(height: 5),
+                      privates.isNotEmpty
+                          ? Column(
+                              children: privates.map((e) {
+                                return listPrivate(size, e);
+                              }).toList(),
+                            )
+                          : EmptyListData(
+                              size: size,
+                              message: 'Tidak ada data Privates',
+                            ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                CustomInkWell(
-                  onTap: () {
-                    navCreated();
-                  },
-                  child: SvgPicture.asset(
-                    MediaRes.created,
-                    // ignore: deprecated_member_use
-                    color: AppColors.bgGreySecond,
-                    width: 30,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            privates.isNotEmpty
-                ? Column(
-                    children: privates.map((e) {
-                      return listPrivate(size, e);
-                    }).toList(),
-                  )
-                : EmptyListData(
-                    size: size,
-                    message: 'Tidak ada data Privates',
-                  ),
-          ],
-        ),
-      ),
-    );
+              );
+            },
+          ),
+        ));
   }
 
   Widget listPrivate(Size size, PrivatesEntity e) {
@@ -152,7 +171,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
         if (mounted) {
           initialized = false; // reset biar filter di-refresh
           // Lakukan refresh atau panggil event untuk mengambil data coaching
-          context.read<PrivatesBloc>().add(ListPrivatesEvent(''));
+          requestSearch();
         }
       },
       child: Container(
@@ -189,6 +208,10 @@ class _PrivatesPageState extends State<PrivatesPage> {
     );
   }
 
+  void requestSearch() {
+    _privatesBloc.add(ListPrivatesEvent(dateStrCtr.text, dateFnsCtr.text));
+  }
+
   void navCreated() async {
     await AppNavigator.push(
       const CreatedPrivatesPage(),
@@ -196,7 +219,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
     );
     if (mounted) {
       initialized = false; // reset biar filter di-refresh
-      context.read<PrivatesBloc>().add(ListPrivatesEvent(''));
+      requestSearch();
     }
   }
 
