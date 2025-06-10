@@ -1,6 +1,7 @@
 import 'package:coachup/features/students/domain/usecases/create_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/delete_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/get_students_usecase.dart';
+import 'package:coachup/features/students/domain/usecases/list_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/update_students_usecase.dart';
 import 'package:coachup/features/students/presentation/bloc/students_event.dart';
 import 'package:coachup/features/students/presentation/bloc/students_state.dart';
@@ -11,12 +12,14 @@ class StudentsBloc extends Bloc<StudentsEvent, StudentsState> {
   final GetStudentsUseCase get;
   final UpdateStudentsUseCase update;
   final DeleteStudentsUseCase delete;
+  final ListStudentsUseCase list;
 
   StudentsBloc(
     this.create,
     this.get,
     this.update,
     this.delete,
+    this.list,
   ) : super(StudentsInitial()) {
     on<CreateStudentsEvent>((event, emit) async {
       emit(CreateStudentsLoading());
@@ -28,10 +31,20 @@ class StudentsBloc extends Bloc<StudentsEvent, StudentsState> {
       );
     });
 
+    on<ListStudentsEvent>((event, emit) async {
+      emit(ListStudentsLoading());
+
+      final result = await list();
+      result.fold(
+        (failure) => emit(ListStudentsFailure(failure.message)),
+        (success) => emit(ListStudentsLoaded(success)),
+      );
+    });
+
     on<GetStudentsEvent>((event, emit) async {
       emit(GetStudentsLoading());
 
-      final result = await get();
+      final result = await get(event.id);
       result.fold(
         (failure) => emit(GetStudentsFailure(failure.message)),
         (success) => emit(GetStudentsLoaded(success)),

@@ -15,9 +15,17 @@ class CreateStudentsEvent extends StudentsEvent {
   List<Object?> get props => [students];
 }
 
-class GetStudentsEvent extends StudentsEvent {
+class ListStudentsEvent extends StudentsEvent {
+  
   @override
   List<Object?> get props => [];
+}
+
+class GetStudentsEvent extends StudentsEvent {
+  final String id;
+  const GetStudentsEvent(this.id);
+  @override
+  List<Object?> get props => [id];
 }
 
 class UpdateStudentsEvent extends StudentsEvent {

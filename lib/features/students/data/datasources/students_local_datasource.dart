@@ -9,7 +9,8 @@ abstract class StudentsLocalDataSource {
   Future<String> insertStudents(StudentEntity model);
   Future<String> updateStudents(StudentEntity model);
   Future<String> deleteStudents(String id);
-  Future<List<StudentEntity>> getStudents();
+  Future<List<StudentEntity>> list();
+  Future<StudentEntity> get(String id);
 }
 
 class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
@@ -44,12 +45,27 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
   }
 
   @override
-  Future<List<StudentEntity>> getStudents() async {
+  Future<List<StudentEntity>> list() async {
     final database = await db.database;
     final List<Map<String, dynamic>> maps = await database.query('students');
     List<StudentEntity> model =
         maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
     return model;
+  }
+
+  @override
+  Future<StudentEntity> get(String id) async {
+    final database = await db.database;
+    final List<Map<String, dynamic>> maps = await database.query(
+      'students',
+      where: '_id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isEmpty) {
+      throw ServerException('Coach tidak ditemukan');
+    }
+    final coachModel = StudentModel.fromMap(maps.first);
+    return coachModel;
   }
 
   @override

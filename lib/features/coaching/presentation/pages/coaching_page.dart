@@ -98,7 +98,7 @@ class _CoachingPageState extends State<CoachingPage> {
                         Expanded(
                           child: CustomSearchField(
                             controller: searchController,
-                            hintText: 'Cari Nama Sekolah...',
+                            hintText: 'Cari nama sekolah...',
                             onChanged: (value) {
                               search(value);
                             },
@@ -154,6 +154,7 @@ class _CoachingPageState extends State<CoachingPage> {
                             size: size,
                             message: 'Tidak ada data Pelatihan',
                           ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),

@@ -42,6 +42,7 @@ import 'package:coachup/features/students/domain/repositories/students_repositor
 import 'package:coachup/features/students/domain/usecases/create_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/delete_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/get_students_usecase.dart';
+import 'package:coachup/features/students/domain/usecases/list_students_usecase.dart';
 import 'package:coachup/features/students/domain/usecases/update_students_usecase.dart';
 import 'package:coachup/features/students/presentation/bloc/students_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -111,11 +112,13 @@ Future<void> init() async {
         sl<GetStudentsUseCase>(),
         sl<UpdateStudentsUseCase>(),
         sl<DeleteStudentsUseCase>(),
+        sl<ListStudentsUseCase>(),
       ));
   sl.registerLazySingleton(() => GetStudentsUseCase(sl()));
   sl.registerLazySingleton(() => CreateStudentsUseCase(sl()));
   sl.registerLazySingleton(() => UpdateStudentsUseCase(sl()));
   sl.registerLazySingleton(() => DeleteStudentsUseCase(sl()));
+  sl.registerLazySingleton(() => ListStudentsUseCase(sl()));
   sl.registerLazySingleton<StudentsRepository>(
     () => StudentsRepositoryImpl(
       sl<StudentsRemoteDataSource>(),

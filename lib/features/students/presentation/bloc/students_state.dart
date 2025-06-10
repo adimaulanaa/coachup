@@ -12,6 +12,8 @@ class StudentsInitial extends StudentsState {}
 
 class CreateStudentsLoading extends StudentsState {}
 
+class ListStudentsLoading extends StudentsState {}
+
 class GetStudentsLoading extends StudentsState {}
 
 class UpdateStudentsLoading extends StudentsState {}
@@ -36,8 +38,23 @@ class CreateStudentsFailure extends StudentsState {
   List<Object?> get props => [message];
 }
 
-class GetStudentsLoaded extends StudentsState {
+class ListStudentsLoaded extends StudentsState {
   final List<StudentEntity> students;
+
+  const ListStudentsLoaded(this.students);
+}
+
+class ListStudentsFailure extends StudentsState {
+  final String message;
+
+  const ListStudentsFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class GetStudentsLoaded extends StudentsState {
+  final StudentEntity students;
 
   const GetStudentsLoaded(this.students);
 }

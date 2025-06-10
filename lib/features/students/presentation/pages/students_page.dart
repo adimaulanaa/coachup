@@ -26,6 +26,7 @@ class StudentsPage extends StatefulWidget {
 }
 
 class _StudentsPageState extends State<StudentsPage> {
+  late StudentsBloc _studentBloc;
   List<StudentEntity> students = [];
   List<StudentEntity> filterStudents = [];
   TextEditingController searchController = TextEditingController();
@@ -34,41 +35,13 @@ class _StudentsPageState extends State<StudentsPage> {
   @override
   void initState() {
     super.initState();
-    context.read<StudentsBloc>().add(GetStudentsEvent());
+    _studentBloc = context.read<StudentsBloc>();
+    requestSearch();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocListener<StudentsBloc, StudentsState>(
-      listener: (context, state) {
-        if (state is GetStudentsLoading) {
-          LoadingDialog.show();
-        } else if (state is GetStudentsFailure) {
-          LoadingDialog.hide();
-          context.showErrorSnackBar(
-            state.message,
-            onNavigate: () {}, // bottom close
-          );
-        }
-      },
-      child: BlocBuilder<StudentsBloc, StudentsState>(
-        builder: (context, state) {
-          if (state is GetStudentsLoaded) {
-            students = state.students;
-            if (!initialized) {
-              filterStudents = students;
-              initialized = true;
-            }
-            LoadingDialog.hide();
-          }
-          return bodyForm(size);
-        },
-      ),
-    );
-  }
-
-  Widget bodyForm(Size size) {
     return Scaffold(
       backgroundColor: AppColors.bgGrey,
       appBar: AppBar(
@@ -86,53 +59,76 @@ class _StudentsPageState extends State<StudentsPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomSearchField(
-                      controller: searchController,
-                      hintText: 'Cari Nama...',
-                      onChanged: (value) {
-                        search(value);
-                      },
-                      onClear: () {
-                        searchController.clear();
-                        search('');
-                      },
+      body: BlocListener<StudentsBloc, StudentsState>(
+        listener: (context, state) {
+          if (state is ListStudentsLoading) {
+            LoadingDialog.show();
+          } else if (state is ListStudentsFailure) {
+            LoadingDialog.hide();
+            context.showErrorSnackBar(
+              state.message,
+              onNavigate: () {}, // bottom close
+            );
+          } else if (state is ListStudentsLoaded) {
+            students = state.students;
+            filterStudents = students;
+            initialized = true;
+            LoadingDialog.hide();
+          }
+        },
+        child: BlocBuilder<StudentsBloc, StudentsState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomSearchField(
+                            controller: searchController,
+                            hintText: 'Cari Nama...',
+                            onChanged: (value) {
+                              search(value);
+                            },
+                            onClear: () {
+                              searchController.clear();
+                              search('');
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        CustomInkWell(
+                          onTap: () {
+                            navCreated();
+                          },
+                          child: SvgPicture.asset(
+                            MediaRes.addStudent,
+                            // ignore: deprecated_member_use
+                            color: AppColors.primary,
+                            width: 30,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  CustomInkWell(
-                    onTap: () {
-                      navCreated();
-                    },
-                    child: SvgPicture.asset(
-                      MediaRes.addStudent,
-                      // ignore: deprecated_member_use
-                      color: AppColors.primary,
-                      width: 30,
-                    ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    filterStudents.isNotEmpty
+                        ? Column(
+                            children: filterStudents.map((e) {
+                              return listStudents(size, e);
+                            }).toList(),
+                          )
+                        : EmptyListData(
+                            size: size,
+                            message: 'Tidak ada data Murid',
+                          ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-              filterStudents.isNotEmpty
-                  ? Column(
-                      children: filterStudents.map((e) {
-                        return listStudents(size, e);
-                      }).toList(),
-                    )
-                  : EmptyListData(
-                      size: size,
-                      message: 'Tidak ada data Murid',
-                    ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -148,7 +144,7 @@ class _StudentsPageState extends State<StudentsPage> {
         );
         if (mounted) {
           initialized = false;
-          context.read<StudentsBloc>().add(GetStudentsEvent());
+          requestSearch();
         }
       },
       child: Container(
@@ -200,6 +196,10 @@ class _StudentsPageState extends State<StudentsPage> {
     );
   }
 
+  void requestSearch() {
+    _studentBloc.add(ListStudentsEvent());
+  }
+
   void navCreated() async {
     await AppNavigator.push(
       const CreatedStudentsPage(),
@@ -207,7 +207,7 @@ class _StudentsPageState extends State<StudentsPage> {
     );
     if (mounted) {
       initialized = false; // reset biar filter di-refresh
-      context.read<StudentsBloc>().add(GetStudentsEvent());
+      requestSearch();
     }
   }
 

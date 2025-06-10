@@ -76,6 +76,7 @@ class CoachingRepositoryImpl implements CoachingRepository {
     }
   }
 
+  @override
   Future<Either<Failure, CoachEntity>> getCoachings(String id) async {
     if (await networkInfo.isConnected) {
       try {

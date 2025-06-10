@@ -47,10 +47,37 @@ class StudentsRepositoryImpl implements StudentsRepository {
   }
 
   @override
-  Future<Either<Failure, List<StudentEntity>>> getStudentss() async {
+  Future<Either<Failure, List<StudentEntity>>> list() async {
     if (await networkInfo.isConnected) {
       try {
-        final local = await localDatasource.getStudents();
+        final local = await localDatasource.list();
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.message));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.message));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.message));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.message));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, StudentEntity>> get(String id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.get(id);
         return Right(local);
       } on BadRequestException catch (e) {
         return Left(BadRequestFailure(e.message));

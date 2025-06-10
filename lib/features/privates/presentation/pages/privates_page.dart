@@ -117,7 +117,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      // 🔽 Date Filter Widget 
+                      // 🔽 Date Filter Widget
                       Row(
                         children: [
                           Expanded(
@@ -149,6 +149,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
                               size: size,
                               message: 'Tidak ada data Privates',
                             ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
