@@ -9,6 +9,7 @@ import 'package:coachup/features/coaching/domain/usecases/delete_coaching_usecas
 import 'package:coachup/features/coaching/domain/usecases/detail_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_studentc_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/list_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/update_coaching_usecase.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_bloc.dart';
 import 'package:coachup/features/dashboard/data/datasources/dashboard_local_datasource.dart';
@@ -81,6 +82,7 @@ Future<void> init() async {
         sl<DeleteCoachingUseCase>(),
         sl<GetStudentCUseCase>(),
         sl<DetailCoachingUseCase>(),
+        sl<ListCoachingUseCase>(),
       ));
   sl.registerLazySingleton(() => GetCoachingUseCase(sl()));
   sl.registerLazySingleton(() => CreateCoachingUseCase(sl()));
@@ -88,6 +90,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteCoachingUseCase(sl()));
   sl.registerLazySingleton(() => GetStudentCUseCase(sl()));
   sl.registerLazySingleton(() => DetailCoachingUseCase(sl()));
+  sl.registerLazySingleton(() => ListCoachingUseCase(sl()));
   sl.registerLazySingleton<CoachingRepository>(
     () => CoachingRepositoryImpl(
       sl<CoachingRemoteDataSource>(),

@@ -3,6 +3,7 @@ import 'package:coachup/features/coaching/domain/usecases/delete_coaching_usecas
 import 'package:coachup/features/coaching/domain/usecases/detail_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/get_studentc_usecase.dart';
+import 'package:coachup/features/coaching/domain/usecases/list_coaching_usecase.dart';
 import 'package:coachup/features/coaching/domain/usecases/update_coaching_usecase.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_event.dart';
 import 'package:coachup/features/coaching/presentation/bloc/coaching_state.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
   final CreateCoachingUseCase create;
+  final ListCoachingUseCase list;
   final GetCoachingUseCase get;
   final DetailCoachingUseCase detail;
   final UpdateCoachingUseCase update;
@@ -21,7 +23,9 @@ class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
     this.get,
     this.update,
     this.delete,
-    this.student, this.detail,
+    this.student,
+    this.detail,
+    this.list,
   ) : super(CoachingInitial()) {
     on<CreateCoachingEvent>((event, emit) async {
       emit(CreateCoachingLoading());
@@ -33,10 +37,20 @@ class CoachingBloc extends Bloc<CoachingEvent, CoachingState> {
       );
     });
 
+    on<ListCoachingEvent>((event, emit) async {
+      emit(ListCoachingLoading());
+
+      final result = await list(event.str, event.fns);
+      result.fold(
+        (failure) => emit(ListCoachingFailure(failure.message)),
+        (success) => emit(ListCoachingLoaded(success)),
+      );
+    });
+
     on<GetCoachingEvent>((event, emit) async {
       emit(GetCoachingLoading());
 
-      final result = await get();
+      final result = await get(event.id);
       result.fold(
         (failure) => emit(GetCoachingFailure(failure.message)),
         (success) => emit(GetCoachingLoaded(success)),

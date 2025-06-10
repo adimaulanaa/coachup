@@ -15,7 +15,19 @@ class CreateCoachingEvent extends CoachingEvent {
   List<Object?> get props => [coaching];
 }
 
+class ListCoachingEvent extends CoachingEvent {
+  final String str;
+  final String fns;
+
+  const ListCoachingEvent(this.str, this.fns);
+  
+  @override
+  List<Object?> get props => [str, fns];
+}
+
 class GetCoachingEvent extends CoachingEvent {
+  final String id;
+  const GetCoachingEvent(this.id);
   @override
   List<Object?> get props => [];
 }

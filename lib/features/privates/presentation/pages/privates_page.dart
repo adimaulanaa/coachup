@@ -92,7 +92,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
                           Expanded(
                             child: CustomSearchField(
                               controller: searchController,
-                              hintText: 'Cari Nama Private...',
+                              hintText: 'Cari nama private...',
                               onChanged: (value) {
                                 search(value);
                               },
@@ -117,7 +117,7 @@ class _PrivatesPageState extends State<PrivatesPage> {
                         ],
                       ),
                       const SizedBox(height: 5),
-                      // 🔽 Date Filter Widget (misalnya 2 input tanggal)
+                      // 🔽 Date Filter Widget 
                       Row(
                         children: [
                           Expanded(
@@ -137,10 +137,8 @@ class _PrivatesPageState extends State<PrivatesPage> {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 16),
                       // 🔽 Body content
-                      const SizedBox(height: 5),
                       privates.isNotEmpty
                           ? Column(
                               children: privates.map((e) {

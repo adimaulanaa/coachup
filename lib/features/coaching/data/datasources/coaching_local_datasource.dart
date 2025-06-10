@@ -5,6 +5,7 @@ import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity
 import 'package:coachup/features/services/database_service.dart';
 import 'package:coachup/features/students/data/models/students_model.dart';
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,7 +13,8 @@ abstract class CoachingLocalDataSource {
   Future<String> insertCoaching(CoachEntity model);
   Future<String> updateCoaching(CoachEntity model);
   Future<String> deleteCoaching(String id);
-  Future<List<CoachEntity>> getCoaching();
+  Future<List<CoachModel>> listCoaching(String str, String fns);
+  Future<CoachEntity> getCoaching(String id);
   Future<List<StudentEntity>> getStudentc();
   Future<DetailCoachingEntity> detailCoaching(String id);
 }
@@ -56,10 +58,47 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
   }
 
   @override
-  Future<List<CoachEntity>> getCoaching() async {
+  Future<List<CoachModel>> listCoaching(String str, String fns) async {
     final database = await db.database;
-    final List<Map<String, dynamic>> maps = await database.query('coaches');
-    return maps.map((e) => CoachModel.fromMap(e).toEntity()).toList();
+    // final List<Map<String, dynamic>> maps = await database.query('coaches');
+    List<Map<String, dynamic>> maps;
+    if (str.isNotEmpty && fns.isNotEmpty) {
+      // Ambil data di antara str dan fns
+      maps = await database.query(
+        'coaches',
+        where: 'date BETWEEN ? AND ?',
+        whereArgs: [str, fns],
+      );
+    } else {
+      // Ambil data 30 hari terakhir
+      final now = DateTime.now();
+      final startOfMonth = DateTime(now.year, now.month, 1);
+      final endOfMonth = DateTime(now.year, now.month + 1, 0);
+      final startStr = DateFormat('yyyy-MM-dd').format(startOfMonth);
+      final endStr = DateFormat('yyyy-MM-dd').format(endOfMonth);
+      maps = await database.query(
+        'coaches',
+        where: 'date BETWEEN ? AND ?',
+        whereArgs: [startStr, endStr],
+      );
+    }
+    final result = maps.map((m) => CoachModel.fromMap(m)).toList();
+    return result;
+  }
+
+  @override
+  Future<CoachEntity> getCoaching(String id) async {
+    final database = await db.database;
+    final List<Map<String, dynamic>> maps = await database.query(
+      'coaches',
+      where: '_id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isEmpty) {
+      throw ServerException('Coach tidak ditemukan');
+    }
+    final coachModel = CoachModel.fromMap(maps.first);
+    return coachModel;
   }
 
   @override
@@ -127,16 +166,15 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
       final map = coachMaps.first;
 
       // Konversi field 'members' (comma-separated) menjadi List<String>
-    final List<String> idList = (map['members'] as String)
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+      final List<String> idList = (map['members'] as String)
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
 
-    // Filter student yang ID-nya ada di idList
-    final List<StudentEntity> selectedMembers = modelStudent
-        .where((student) => idList.contains(student.id))
-        .toList();
+      // Filter student yang ID-nya ada di idList
+      final List<StudentEntity> selectedMembers =
+          modelStudent.where((student) => idList.contains(student.id)).toList();
 
       // Sesuaikan ini dengan field yang kamu punya di tabel "coaches"
       final model = DetailCoachingEntity(

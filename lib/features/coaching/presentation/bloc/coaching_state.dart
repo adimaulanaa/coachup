@@ -1,3 +1,4 @@
+import 'package:coachup/features/coaching/data/models/coaching_model.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
 import 'package:coachup/features/students/domain/entities/students_entity.dart';
@@ -15,6 +16,8 @@ class CoachingInitial extends CoachingState {}
 class CreateCoachingLoading extends CoachingState {}
 
 class GetCoachingLoading extends CoachingState {}
+
+class ListCoachingLoading extends CoachingState {}
 
 class UpdateCoachingLoading extends CoachingState {}
 
@@ -42,8 +45,23 @@ class CreateCoachingFailure extends CoachingState {
   List<Object?> get props => [message];
 }
 
+class ListCoachingLoaded extends CoachingState {
+  final List<CoachModel> coaching;
+
+  const ListCoachingLoaded(this.coaching);
+}
+
+class ListCoachingFailure extends CoachingState {
+  final String message;
+
+  const ListCoachingFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class GetCoachingLoaded extends CoachingState {
-  final List<CoachEntity> coaching;
+  final CoachEntity coaching;
 
   const GetCoachingLoaded(this.coaching);
 }

@@ -4,6 +4,7 @@ import 'package:coachup/core/error/failure.dart';
 import 'package:coachup/core/network/network_info.dart';
 import 'package:coachup/features/coaching/data/datasources/coaching_local_datasource.dart';
 import 'package:coachup/features/coaching/data/datasources/coaching_remote_datasource.dart';
+import 'package:coachup/features/coaching/data/models/coaching_model.dart';
 import 'package:coachup/features/coaching/domain/entities/coaching_entity.dart';
 import 'package:coachup/features/coaching/domain/entities/detail_coaching_entity.dart';
 import 'package:coachup/features/coaching/domain/repositories/coaching_repository.dart';
@@ -49,10 +50,36 @@ class CoachingRepositoryImpl implements CoachingRepository {
   }
 
   @override
-  Future<Either<Failure, List<CoachEntity>>> getCoachings() async {
+  Future<Either<Failure, List<CoachModel>>> listCoachings(String str, String fns) async {
     if (await networkInfo.isConnected) {
       try {
-        final local = await localDatasource.getCoaching();
+        final local = await localDatasource.listCoaching(str, fns);
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.message));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.message));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.message));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.message));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
+
+  Future<Either<Failure, CoachEntity>> getCoachings(String id) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.getCoaching(id);
         return Right(local);
       } on BadRequestException catch (e) {
         return Left(BadRequestFailure(e.message));
