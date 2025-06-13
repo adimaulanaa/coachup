@@ -20,6 +20,8 @@ class DeletePrivatesLoading extends PrivatesState {}
 
 class UpdatePrivatesLoading extends PrivatesState {}
 
+class ListMuridPrivatesLoading extends PrivatesState {}
+
 class GetPrivatesFailure extends PrivatesState {
   final String message;
 
@@ -105,6 +107,24 @@ class UpdatePrivatesFailure extends PrivatesState {
   final String message;
 
   const UpdatePrivatesFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ListMuridPrivatesLoaded extends PrivatesState {
+  final List<String> data;
+
+  const ListMuridPrivatesLoaded(this.data);
+
+  @override
+  List<Object?> get props => [data];
+}
+
+class ListMuridPrivatesFailure extends PrivatesState {
+  final String message;
+
+  const ListMuridPrivatesFailure(this.message);
 
   @override
   List<Object?> get props => [message];

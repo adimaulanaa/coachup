@@ -25,6 +25,7 @@ import 'package:coachup/features/privates/domain/repositories/privates_repositor
 import 'package:coachup/features/privates/domain/usecases/created_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/deleted_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/get_privates_usecase.dart';
+import 'package:coachup/features/privates/domain/usecases/list_murid_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/list_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/update_privates_usecase.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
@@ -161,12 +162,14 @@ Future<void> init() async {
         sl<ListPrivatesUseCase>(),
         sl<DeletedPrivatesUseCase>(),
         sl<UpdatedPrivatesUsecase>(),
+        sl<ListMuridPrivatesUseCase>(),
       ));
   sl.registerLazySingleton(() => GetPrivatesUseCase(sl()));
   sl.registerLazySingleton(() => CreatedPrivatesUseCase(sl()));
   sl.registerLazySingleton(() => ListPrivatesUseCase(sl()));
   sl.registerLazySingleton(() => DeletedPrivatesUseCase(sl()));
   sl.registerLazySingleton(() => UpdatedPrivatesUsecase(sl()));
+  sl.registerLazySingleton(() => ListMuridPrivatesUseCase(sl()));
   sl.registerLazySingleton<PrivatesRepository>(
     () => PrivatesRepositoryImpl(
       sl<PrivatesRemoteDataSource>(),

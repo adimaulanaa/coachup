@@ -2,12 +2,15 @@ import 'package:coachup/core/error/exceptions.dart';
 import 'package:coachup/features/privates/data/models/privates_model.dart';
 import 'package:coachup/features/privates/domain/entities/privates_entity.dart';
 import 'package:coachup/features/services/database_service.dart';
+import 'package:coachup/features/students/data/models/students_model.dart';
+import 'package:coachup/features/students/domain/entities/students_entity.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class PrivatesLocalDataSource {
   Future<List<PrivatesModel>> list(String str, String fns);
+  Future<List<String>> listMurid();
   Future<PrivatesModel> get(String id);
   Future<String> delete(String id);
   Future<String> create(PrivatesEntity data);
@@ -49,6 +52,9 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   Future<PrivatesModel> get(String id) async {
     final database = await db.database;
     List<Map<String, dynamic>> maps;
+    final List<Map<String, dynamic>> student = await database.query('students');
+    List<StudentEntity> model =
+        student.map((e) => StudentModel.fromMap(e).toEntity()).toList();
     maps = await database.query(
       'privates',
       where: '_id = ?',
@@ -56,7 +62,15 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
     );
     if (maps.isNotEmpty) {
       // Konversi map pertama ke model
-      return PrivatesModel.fromMap(maps.first);
+      PrivatesModel data = PrivatesModel.fromMap(maps.first);
+      List<String> list = [];
+      if (model.isNotEmpty) {
+        for (var e in model) {
+          list.add(e.name);
+        }
+      }
+      data.listStdn = list;
+      return data;
     } else {
       return PrivatesModel(); // tidak ditemukan
     }
@@ -136,5 +150,20 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
     } else {
       throw Exception('Gagal mengupdate Private');
     }
+  }
+
+  @override
+  Future<List<String>> listMurid() async {
+    final database = await db.database;
+    final List<Map<String, dynamic>> student = await database.query('students');
+    List<StudentEntity> model =
+        student.map((e) => StudentModel.fromMap(e).toEntity()).toList();
+    List<String> list = [];
+    if (model.isNotEmpty) {
+      for (var e in model) {
+        list.add(e.name);
+      }
+    }
+    return list;
   }
 }

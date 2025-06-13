@@ -1,6 +1,7 @@
 import 'package:coachup/features/privates/domain/usecases/created_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/deleted_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/get_privates_usecase.dart';
+import 'package:coachup/features/privates/domain/usecases/list_murid_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/list_privates_usecase.dart';
 import 'package:coachup/features/privates/domain/usecases/update_privates_usecase.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_event.dart';
@@ -13,9 +14,15 @@ class PrivatesBloc extends Bloc<PrivatesEvent, PrivatesState> {
   final CreatedPrivatesUseCase create;
   final DeletedPrivatesUseCase delete;
   final UpdatedPrivatesUsecase update;
+  final ListMuridPrivatesUseCase listMurid;
 
   PrivatesBloc(
-    this.get, this.create, this.list, this.delete, this.update,
+    this.get,
+    this.create,
+    this.list,
+    this.delete,
+    this.update,
+    this.listMurid,
   ) : super(PrivatesInitial()) {
     on<GetPrivatesEvent>((event, emit) async {
       emit(GetPrivatesLoading());
@@ -64,6 +71,16 @@ class PrivatesBloc extends Bloc<PrivatesEvent, PrivatesState> {
       result.fold(
         (failure) => emit(UpdatePrivatesFailure(failure.message)),
         (success) => emit(UpdatePrivatesSuccess(success)),
+      );
+    });
+
+    on<ListMuridPrivatesEvent>((event, emit) async {
+      emit(ListMuridPrivatesLoading());
+
+      final result = await listMurid();
+      result.fold(
+        (failure) => emit(ListMuridPrivatesFailure(failure.message)),
+        (success) => emit(ListMuridPrivatesLoaded(success)),
       );
     });
   }

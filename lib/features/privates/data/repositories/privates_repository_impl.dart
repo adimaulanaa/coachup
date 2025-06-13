@@ -161,4 +161,32 @@ class PrivatesRepositoryImpl implements PrivatesRepository {
           NetworkFailure(StringResources.networkFailureMessage));
     }
   }
+  
+  @override
+  Future<Either<Failure, List<String>>> listMurid() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final local = await localDatasource.listMurid();
+        return Right(local);
+      } on BadRequestException catch (e) {
+        return Left(BadRequestFailure(e.toString()));
+      } on UnauthorisedException catch (e) {
+        return Left(UnauthorisedFailure(e.toString()));
+      } on NotFoundException catch (e) {
+        return Left(NotFoundFailure(e.toString()));
+      } on FetchDataException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on InvalidCredentialException catch (e) {
+        return Left(InvalidCredentialFailure(e.toString()));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message ?? ''));
+      } on NetworkException {
+        return const Left(
+            NetworkFailure(StringResources.networkFailureMessage));
+      }
+    } else {
+      return const Left(
+          NetworkFailure(StringResources.networkFailureMessage));
+    }
+  }
 }

@@ -51,3 +51,8 @@ class UpdatePrivatesEvent extends PrivatesEvent {
   @override
   List<Object?> get props => [data];
 }
+
+class ListMuridPrivatesEvent extends PrivatesEvent {
+  @override
+  List<Object?> get props => [];
+}

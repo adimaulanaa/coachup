@@ -6,6 +6,7 @@ class PrivatesEntity {
   final String? date;
   final String? student;
   final String? studentId;
+  List<String> listStdn;
   final DateTime? createdOn;
   final DateTime? updatedOn;
 
@@ -16,6 +17,7 @@ class PrivatesEntity {
     this.date,
     this.student,
     this.studentId,
+    this.listStdn = const [],
     this.createdOn, 
     this.updatedOn, 
   });

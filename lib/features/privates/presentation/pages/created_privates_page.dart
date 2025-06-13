@@ -12,6 +12,7 @@ import 'package:coachup/features/privates/domain/entities/privates_entity.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_bloc.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_event.dart';
 import 'package:coachup/features/privates/presentation/bloc/privates_state.dart';
+import 'package:coachup/features/privates/presentation/widgets/widgets_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -32,12 +33,16 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
   final inputFocusNode = FocusNode();
   bool isMurid = false;
   bool isSubmited = false;
+  bool isChecked = false;
+  String? selectedName;
   List<String> listMurid = [];
+  List<String> defaultMurid = [];
 
   @override
   void initState() {
     super.initState();
     _privatesBloc = context.read<PrivatesBloc>();
+    _privatesBloc.add(ListMuridPrivatesEvent());
   }
 
   @override
@@ -60,7 +65,8 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
       ),
       body: BlocListener<PrivatesBloc, PrivatesState>(
         listener: (context, state) {
-          if (state is CreatedPrivatesLoading) {
+          if (state is CreatedPrivatesLoading ||
+              state is ListMuridPrivatesLoading) {
             LoadingDialog.show();
           } else if (state is CreatedPrivatesSuccess) {
             LoadingDialog.hide();
@@ -69,7 +75,16 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
               onNavigate: () {}, // bottom close
             );
             AppNavigator.pop(context);
+          } else if (state is ListMuridPrivatesLoaded) {
+            defaultMurid = state.data;
+            LoadingDialog.hide();
           } else if (state is CreatedPrivatesFailure) {
+            LoadingDialog.hide();
+            context.showSuccesSnackBar(
+              state.message,
+              onNavigate: () {}, // bottom close
+            );
+          } else if (state is ListMuridPrivatesFailure) {
             LoadingDialog.hide();
             context.showSuccesSnackBar(
               state.message,
@@ -127,41 +142,67 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
               },
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomTextStudentField(
-                    controller: inputCtr,
-                    focus: inputFocusNode,
-                    label: StringResources.prStudent,
-                    onChanged: (value) {
-                      checkingInput(value);
-                    },
-                    onSubmitted: (value) {
-                      addMurid();
-                    },
-                  ),
-                ),
-                SizedBox(width: 10),
-                CustomInkWell(
-                  onTap: () {
-                    addMurid();
-                  },
-                  child: SvgPicture.asset(
-                    MediaRes.addStudent,
-                    // ignore: deprecated_member_use
-                    color: AppColors.primary,
-                    width: 30,
-                  ),
-                ),
-              ],
+            SmoothCheckbox(
+              value: isChecked,
+              label: 'Pilih Daftar Murid',
+              onChanged: (val) {
+                setState(() {
+                  isChecked = val;
+                });
+              },
             ),
+            const SizedBox(height: 16),
+            isChecked
+                ? CustomSearchStringField(
+                    value: selectedName,
+                    items: defaultMurid,
+                    label: 'Pilih Nama Murid',
+                    onChanged: (val) {
+                      setState(() {
+                        selectedName = val;
+                        addMurid(val.toString());
+                      });
+                    },
+                  )
+                : inputManualMuridView(),
             const SizedBox(height: 16),
             isMurid ? listMuridView() : SizedBox.shrink(),
             SizedBox(height: size.height * 0.11),
           ],
         ),
       ),
+    );
+  }
+
+  Widget inputManualMuridView() {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomTextStudentField(
+            controller: inputCtr,
+            focus: inputFocusNode,
+            label: StringResources.prStudent,
+            onChanged: (value) {
+              checkingInput(value);
+            },
+            onSubmitted: (value) {
+              addMurid(inputCtr.text);
+            },
+          ),
+        ),
+        SizedBox(width: 10),
+        CustomInkWell(
+          onTap: () {
+            addMurid(inputCtr.text);
+          },
+          child: SvgPicture.asset(
+            MediaRes.addStudent,
+            // ignore: deprecated_member_use
+            color: AppColors.primary,
+            width: 30,
+          ),
+        ),
+      ],
     );
   }
 
@@ -219,10 +260,10 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
     setState(() {});
   }
 
-  void addMurid() {
-    bool checking = listMurid.contains(inputCtr.text);
+  void addMurid(String value) {
+    bool checking = listMurid.contains(value);
     if (!checking) {
-      listMurid.add(inputCtr.text);
+      listMurid.add(value);
     } else {
       context.showErrorSnackBar(
         'Nama Sudah Ada!',
@@ -235,6 +276,7 @@ class _CreatedPrivatesPageState extends State<CreatedPrivatesPage> {
       isMurid = false;
     }
     inputCtr.clear();
+    selectedName = null;
 
     // Fokus kembali ke input
     FocusScope.of(context).requestFocus(inputFocusNode);

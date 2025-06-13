@@ -24,6 +24,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  late DashboardBloc _dashboardBloc;
   bool isHeader = false;
   String today = '';
   int totalCoach = 0;
@@ -39,7 +40,8 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     UiModeHelper.enableDefault();
     today = DateFormat('yyyy-MM-dd').format(now);
-    context.read<DashboardBloc>().add(GetDashboardEvent(today));
+    _dashboardBloc = context.read<DashboardBloc>();
+    _dashboardBloc.add(GetDashboardEvent(today));
   }
 
   @override
@@ -87,10 +89,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                 color: AppColors.bgBlack,
                               ),
                             ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 30,
-                            ),
+                            // Icon(
+                            //   Icons.arrow_drop_down,
+                            //   size: 30,
+                            // ),
                           ],
                         ),
                       ],
@@ -251,9 +253,8 @@ class _DashboardPageState extends State<DashboardPage> {
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
-        print(list.length);
+      totalStudentCoach = list.length;
       }
-      // totalStudentCoach =
     }
     if (allPrivate.isNotEmpty) {
       totalPrivate = allPrivate.length;
