@@ -12,30 +12,25 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
 
   @override
   Future<ProfileEntity> getProf() async {
-    // final database = await db.database;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String name = prefs.getString('name') ?? '';
-    String title = prefs.getString('title') ?? '';
-    String tlpn = prefs.getString('tlpn') ?? '';
-    String header = prefs.getString('header') ?? '';
-    String subHeader = prefs.getString('subHeader') ?? '';
-    String footerPic = prefs.getString('footerPic') ?? '';
-    String footerCoach = prefs.getString('footerCoach') ?? '';
-    ProfileEntity model = ProfileEntity(
-      name: name,
-      title: title,
-      tlpn: tlpn,
-      header: header,
-      subHeader: subHeader,
-      footerPic: footerPic,
-      footerCoach: footerCoach,
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final model = ProfileEntity(
+      name: prefs.getString('name') ?? '',
+      title: prefs.getString('title') ?? '',
+      tlpn: prefs.getString('tlpn') ?? '',
+      header: prefs.getString('header') ?? '',
+      subHeader: prefs.getString('subHeader') ?? '',
+      footerPic: prefs.getString('footerPic') ?? '',
+      footerCoach: prefs.getString('footerCoach') ?? '',
     );
+
     return model;
   }
 
   @override
   Future<String> updateProfile(ProfileEntity entity) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await prefs.setString('name', entity.name ?? '');
     await prefs.setString('title', entity.title ?? '');
     await prefs.setString('tlpn', entity.tlpn ?? '');
@@ -43,6 +38,7 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
     await prefs.setString('subHeader', entity.subHeader ?? '');
     await prefs.setString('footerPic', entity.footerPic ?? '');
     await prefs.setString('footerCoach', entity.footerCoach ?? '');
-    return 'Berhasil ubah profile';
+
+    return 'Data profil berhasil diperbarui.';
   }
 }

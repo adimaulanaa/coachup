@@ -38,9 +38,9 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
     );
 
     if (rowId > 0) {
-      return 'Student berhasil disimpan';
+      return 'Data murid berhasil disimpan.';
     } else {
-      throw Exception('Failed to insert student');
+      throw Exception('Gagal menyimpan data murid.');
     }
   }
 
@@ -48,9 +48,7 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
   Future<List<StudentEntity>> list() async {
     final database = await db.database;
     final List<Map<String, dynamic>> maps = await database.query('students');
-    List<StudentEntity> model =
-        maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
-    return model;
+    return maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
   }
 
   @override
@@ -61,11 +59,12 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
       where: '_id = ?',
       whereArgs: [id],
     );
+
     if (maps.isEmpty) {
-      throw ServerException('Coach tidak ditemukan');
+      throw ServerException('Data murid tidak ditemukan.');
     }
-    final coachModel = StudentModel.fromMap(maps.first);
-    return coachModel;
+
+    return StudentModel.fromMap(maps.first);
   }
 
   @override
@@ -91,9 +90,9 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
     );
 
     if (count > 0) {
-      return 'Student updated successfully';
+      return 'Data murid berhasil diperbarui.';
     } else {
-      throw Exception('Failed to update student');
+      throw Exception('Gagal memperbarui data murid.');
     }
   }
 
@@ -108,9 +107,9 @@ class StudentsLocalDataSourceImpl implements StudentsLocalDataSource {
     );
 
     if (rowId > 0) {
-      return 'Hapus data murid berhasil';
+      return 'Data murid berhasil dihapus.';
     } else {
-      throw BadRequestException('Gagal hapus data murid berhasil.');
+      throw BadRequestException('Gagal menghapus data murid.');
     }
   }
 }

@@ -26,7 +26,6 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
   Future<String> insertCoaching(CoachEntity model) async {
     final database = await db.database;
 
-    // Generate UUID jika id belum ada
     final coachModel = CoachModel(
       id: model.id.isEmpty ? const Uuid().v4() : model.id,
       name: model.name,
@@ -51,54 +50,55 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
     );
 
     if (result > 0) {
-      return 'Coach berhasil disimpan';
+      return 'Pelatihan berhasil disimpan.';
     } else {
-      throw Exception('Gagal menyimpan coach');
+      throw Exception('Gagal menyimpan pelatihan.');
     }
   }
 
   @override
   Future<List<CoachModel>> listCoaching(String str, String fns) async {
     final database = await db.database;
-    // final List<Map<String, dynamic>> maps = await database.query('coaches');
     List<Map<String, dynamic>> maps;
+
     if (str.isNotEmpty && fns.isNotEmpty) {
-      // Ambil data di antara str dan fns
       maps = await database.query(
         'coaches',
         where: 'date BETWEEN ? AND ?',
         whereArgs: [str, fns],
       );
     } else {
-      // Ambil data 30 hari terakhir
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month, 1);
       final endOfMonth = DateTime(now.year, now.month + 1, 0);
       final startStr = DateFormat('yyyy-MM-dd').format(startOfMonth);
       final endStr = DateFormat('yyyy-MM-dd').format(endOfMonth);
+
       maps = await database.query(
         'coaches',
         where: 'date BETWEEN ? AND ?',
         whereArgs: [startStr, endStr],
       );
     }
-    final result = maps.map((m) => CoachModel.fromMap(m)).toList();
-    return result;
+
+    return maps.map((m) => CoachModel.fromMap(m)).toList();
   }
 
   @override
   Future<CoachEntity> getCoaching(String id) async {
     final database = await db.database;
-    final List<Map<String, dynamic>> maps = await database.query(
+
+    final maps = await database.query(
       'coaches',
       where: '_id = ?',
       whereArgs: [id],
     );
+
     if (maps.isEmpty) {
-      throw ServerException('Coach tidak ditemukan');
+      throw ServerException('Pelatihan tidak ditemukan.');
     }
-    final coachModel = CoachModel.fromMap(maps.first);
-    return coachModel;
+
+    return CoachModel.fromMap(maps.first);
   }
 
   @override
@@ -107,7 +107,7 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
 
     final coachModel = CoachModel.fromEntity(model);
 
-    final int result = await database.update(
+    final result = await database.update(
       'coaches',
       coachModel.toMap(),
       where: '_id = ?',
@@ -115,9 +115,9 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
     );
 
     if (result > 0) {
-      return 'Coach berhasil diperbarui';
+      return 'Pelatihan berhasil diperbarui.';
     } else {
-      throw Exception('Gagal memperbarui coach');
+      throw Exception('Gagal memperbarui pelatihan.');
     }
   }
 
@@ -125,79 +125,75 @@ class CoachingLocalDataSourceImpl implements CoachingLocalDataSource {
   Future<String> deleteCoaching(String id) async {
     final database = await db.database;
 
-    final int result = await database.delete(
+    final result = await database.delete(
       'coaches',
       where: '_id = ?',
       whereArgs: [id],
     );
 
     if (result > 0) {
-      return 'Coach berhasil dihapus';
+      return 'Pelatihan berhasil dihapus.';
     } else {
-      throw BadRequestException('Gagal menghapus coach');
+      throw BadRequestException('Gagal menghapus pelatihan.');
     }
   }
 
   @override
   Future<List<StudentEntity>> getStudentc() async {
     final database = await db.database;
-    final List<Map<String, dynamic>> maps = await database.query('students');
-    List<StudentEntity> model =
-        maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
-    return model;
+
+    final maps = await database.query('students');
+
+    return maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
   }
 
   @override
   Future<DetailCoachingEntity> detailCoaching(String id) async {
     final database = await db.database;
 
-    final List<Map<String, dynamic>> coachMaps = await database.query(
+    final coachMaps = await database.query(
       'coaches',
       where: '_id = ?',
       whereArgs: [id],
     );
 
-    // student
-    final List<Map<String, dynamic>> maps = await database.query('students');
-    List<StudentEntity> modelStudent =
-        maps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
+    final studentMaps = await database.query('students');
+    final modelStudent =
+        studentMaps.map((e) => StudentModel.fromMap(e).toEntity()).toList();
 
-    if (coachMaps.isNotEmpty) {
-      final map = coachMaps.first;
-
-      // Konversi field 'members' (comma-separated) menjadi List<String>
-      final List<String> idList = (map['members'] as String)
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-
-      // Filter student yang ID-nya ada di idList
-      final List<StudentEntity> selectedMembers =
-          modelStudent.where((student) => idList.contains(student.id)).toList();
-
-      // Sesuaikan ini dengan field yang kamu punya di tabel "coaches"
-      final model = DetailCoachingEntity(
-        id: map['_id'] ?? '',
-        name: map['name'] ?? '',
-        topic: map['topic'] ?? '',
-        learning: map['learning'] ?? '',
-        date: map['date'] ?? '',
-        timeStart: map['time_start'] ?? '',
-        timeFinish: map['time_finish'] ?? '',
-        picName: map['pic_name'] ?? '',
-        picCollage: map['pic_collage'] ?? '',
-        members: selectedMembers,
-        allStudent: modelStudent,
-        activity: map['activity'] ?? '',
-        description: map['description'] ?? '',
-        createdOn: map['created_on'] ?? '',
-        updatedOn: map['updated_on'] ?? '',
-      );
-      return model;
-    } else {
-      // Handle jika data tidak ditemukan
-      throw Exception('Data not found');
+    if (coachMaps.isEmpty) {
+      throw Exception('Data pelatihan tidak ditemukan.');
     }
+
+    final map = coachMaps.first;
+    final membersRaw = map['members'] as String? ?? '';
+
+    final idList = membersRaw
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    final selectedMembers =
+        modelStudent.where((student) => idList.contains(student.id)).toList();
+
+    // Sesuaikan ini dengan field yang kamu punya di tabel "coaches"
+    return DetailCoachingEntity(
+      id: map['_id'] as String? ?? '',
+      name: map['name'] as String? ?? '',
+      topic: map['topic'] as String? ?? '',
+      learning: map['learning'] as String? ?? '',
+      date: map['date'] as String? ?? '',
+      timeStart: map['time_start'] as String? ?? '',
+      timeFinish: map['time_finish'] as String? ?? '',
+      picName: map['pic_name'] as String? ?? '',
+      picCollage: map['pic_collage'] as String? ?? '',
+      activity: map['activity'] as String? ?? '',
+      description: map['description'] as String? ?? '',
+      createdOn: map['created_on'] as String? ?? '',
+      updatedOn: map['updated_on'] as String? ?? '',
+      members: selectedMembers,
+      allStudent: modelStudent,
+    );
   }
 }

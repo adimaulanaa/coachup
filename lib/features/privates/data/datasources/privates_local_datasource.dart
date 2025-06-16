@@ -24,55 +24,55 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   Future<List<PrivatesModel>> list(String str, String fns) async {
     final database = await db.database;
     List<Map<String, dynamic>> maps;
+
     if (str.isNotEmpty && fns.isNotEmpty) {
-      // Ambil data di antara str dan fns
+      // Ambil data antara tanggal str dan fns
       maps = await database.query(
         'privates',
         where: 'date BETWEEN ? AND ?',
         whereArgs: [str, fns],
       );
     } else {
-      // Ambil data 30 hari terakhir
+      // Default: ambil data dari awal hingga akhir bulan berjalan
       final now = DateTime.now();
       final startOfMonth = DateTime(now.year, now.month, 1);
       final endOfMonth = DateTime(now.year, now.month + 1, 0);
       final startStr = DateFormat('yyyy-MM-dd').format(startOfMonth);
       final endStr = DateFormat('yyyy-MM-dd').format(endOfMonth);
+
       maps = await database.query(
         'privates',
         where: 'date BETWEEN ? AND ?',
         whereArgs: [startStr, endStr],
       );
     }
-    final result = maps.map((m) => PrivatesModel.fromMap(m)).toList();
-    return result;
+
+    return maps.map((m) => PrivatesModel.fromMap(m)).toList();
   }
 
   @override
   Future<PrivatesModel> get(String id) async {
     final database = await db.database;
-    List<Map<String, dynamic>> maps;
+
+    // Ambil semua data murid
     final List<Map<String, dynamic>> student = await database.query('students');
-    List<StudentEntity> model =
+    final List<StudentEntity> model =
         student.map((e) => StudentModel.fromMap(e).toEntity()).toList();
-    maps = await database.query(
+
+    // Ambil data private berdasarkan ID
+    final maps = await database.query(
       'privates',
       where: '_id = ?',
       whereArgs: [id],
     );
+
     if (maps.isNotEmpty) {
-      // Konversi map pertama ke model
-      PrivatesModel data = PrivatesModel.fromMap(maps.first);
-      List<String> list = [];
-      if (model.isNotEmpty) {
-        for (var e in model) {
-          list.add(e.name);
-        }
-      }
+      final data = PrivatesModel.fromMap(maps.first);
+      final list = model.map((e) => e.name).toList();
       data.listStdn = list;
       return data;
     } else {
-      return PrivatesModel(); // tidak ditemukan
+      throw Exception('Data private tidak ditemukan.');
     }
   }
 
@@ -80,7 +80,6 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   Future<String> create(PrivatesEntity model) async {
     final database = await db.database;
 
-    // Generate UUID jika id belum ada
     final insert = PrivatesModel(
       id: const Uuid().v4(),
       name: model.name,
@@ -91,6 +90,7 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
       createdOn: model.createdOn,
       updatedOn: model.updatedOn,
     );
+
     final int result = await database.insert(
       'privates',
       insert.toMap(),
@@ -98,9 +98,9 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
     );
 
     if (result > 0) {
-      return 'Private berhasil disimpan';
+      return 'Data private berhasil disimpan.';
     } else {
-      throw Exception('Gagal menyimpan Private');
+      throw Exception('Gagal menyimpan data private.');
     }
   }
 
@@ -115,9 +115,9 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
     );
 
     if (result > 0) {
-      return 'Private berhasil dihapus';
+      return 'Data private berhasil dihapus.';
     } else {
-      throw BadRequestException('Gagal menghapus Private');
+      throw BadRequestException('Gagal menghapus data private.');
     }
   }
 
@@ -125,16 +125,15 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   Future<String> update(PrivatesEntity model) async {
     final database = await db.database;
 
-    // Konversi entity ke model
     final updateModel = PrivatesModel(
-      id: model.id, // pastikan ini wajib ada
+      id: model.id,
       name: model.name,
       description: model.description,
       date: model.date,
       student: model.student,
       studentId: model.studentId,
       createdOn: model.createdOn,
-      updatedOn: model.updatedOn, // update waktu terakhir
+      updatedOn: model.updatedOn,
     );
 
     final int result = await database.update(
@@ -146,9 +145,9 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
     );
 
     if (result > 0) {
-      return 'Private berhasil diupdate';
+      return 'Data private berhasil diperbarui.';
     } else {
-      throw Exception('Gagal mengupdate Private');
+      throw Exception('Gagal memperbarui data private.');
     }
   }
 
@@ -156,14 +155,9 @@ class PrivatesLocalDataSourceImpl implements PrivatesLocalDataSource {
   Future<List<String>> listMurid() async {
     final database = await db.database;
     final List<Map<String, dynamic>> student = await database.query('students');
-    List<StudentEntity> model =
+    final List<StudentEntity> model =
         student.map((e) => StudentModel.fromMap(e).toEntity()).toList();
-    List<String> list = [];
-    if (model.isNotEmpty) {
-      for (var e in model) {
-        list.add(e.name);
-      }
-    }
-    return list;
+
+    return model.map((e) => e.name).toList();
   }
 }
